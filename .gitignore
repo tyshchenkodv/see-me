@@ -1,0 +1,6 @@
+# Temp files
+/.idea
+/tmp
+
+# dependencies
+/node_modules
