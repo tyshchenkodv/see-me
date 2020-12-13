@@ -1,12 +1,16 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './App.css';
+import MainPage from "./containers/MainPage";
 
-export default class App extends Component{
-  render() {
+function App (){
+
+    const UserName = 'Dima';
+
     return (
         <div className='App'>
-          <p>New social media - <span>SeeMe</span></p>
+          <MainPage userName={UserName}/>
         </div>
     );
-  }
 }
+
+export default App;
