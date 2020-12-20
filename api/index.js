@@ -1,6 +1,8 @@
+const Config = require('./config');
 const app = require('./app');
-const port = '3333';
 
-const listen = app.listen(port, () => {
-    console.log(`App server is running on port ${port}`);
+const config = new Config();
+
+const listen = app.listen(config.getPort, () => {
+    console.log(`App server is running on port ${config.getPort}`);
 });

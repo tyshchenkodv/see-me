@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const NotFoundExceptions = require('./exceptions/NotFoundException');
 
 router.get('/', (req, res) => {
     return res.send({
@@ -8,8 +9,13 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/:name', (req, res) => {
+router.get('/:name', (req, res, next) => {
     const { name } = req.params;
+
+    if (name === 'error') {
+        return next(new NotFoundExceptions());
+    }
+
     return res.send({
         code: 200,
         message: `Hello ${name}`,
