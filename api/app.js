@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const router = require('./routes');
+const postsRoutes = require('./routes/postsRoutes');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const errorHandler = require('./middlewares/errorHandler')
@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 app.use(cors());
-app.use('/', router);
+app.use('/posts', postsRoutes);
 
 app.use(errorHandler);
 
