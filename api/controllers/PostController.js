@@ -1,10 +1,7 @@
-const knex = require('../database');
-const NotFoundException = require('./../exceptions/NotFoundException');
-const BadRequestException = require('./../exceptions/BadRequestException');
-
 module.exports = {
     list: async (req, res) => {
-        const posts = await knex.select('*').from('posts');
+        const db = req.container.resolve('db');
+        const posts = await db.select('*').from('posts');
 
         return res.status(200).send({
             posts: posts,
@@ -13,13 +10,15 @@ module.exports = {
     item: async (req, res, next) => {
         const { id } = req.params;
 
-        const item = await knex
+        const db = req.container.resolve('db');
+        const item = await db
             .select('*')
             .from('posts')
             .where('id', id)
             .first();
 
         if (!item) {
+            const NotFoundException = req.container.resolve('notFoundException');
             return next(new NotFoundException());
         }
 
@@ -30,57 +29,61 @@ module.exports = {
     update: async (req, res, next) => {
         const { id } = req.params;
 
-        const item = await knex
+        const db = req.container.resolve('db');
+        const item = await db
             .select('*')
             .from('posts')
             .where('id', id)
             .first();
 
         if (!item) {
+            const NotFoundException = req.container.resolve('notFoundException');
             return next(new NotFoundException());
         }
 
         try {
 
             const data = req.body;
-            await knex('posts')
+            await db('posts')
                 .where('id', id)
                 .update(data);
 
         } catch (error) {
-
+            const BadRequestException = req.container.resolve('badRequestException');
             return next(new BadRequestException(error));
-
         }
 
         return res.status(204).send();
     },
     delete: async (req, res, next) => {
         const { id } = req.params;
-        const item = await knex
+
+        const db = req.container.resolve('db');
+        const item = await db
             .select('*')
             .from('posts')
             .where('id', id)
             .first();
 
         if (!item) {
+            const NotFoundException = req.container.resolve('notFoundException');
             return next(new NotFoundException());
         }
 
-        await knex('posts').where('id', id).del();
+        await db('posts').where('id', id).del();
 
         return res.status(204).send();
     },
     create: async (req, res, next) => {
+        const db = req.container.resolve('db');
         try {
             const data = req.body;
 
-            await knex('posts')
+            await db('posts')
                 .insert(data);
         } catch (error) {
-
+            const BadRequestException = req.container.resolve('badRequestException');
             return next(new BadRequestException(error));
-
         }
 
         return res.status(201).send();

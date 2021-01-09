@@ -1,9 +1,13 @@
 const express = require('express');
 const app = express();
-const postsRoutes = require('./routes/postsRoutes');
+const PostsRoutes = require('./routes/postsRoutes');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const errorHandler = require('./middlewares/errorHandler')
+const errorHandler = require('./middlewares/errorHandler');
+const DIContainer = require('./services/DIContainer');
+const { scopePerRequest } = require('awilix-express');
+
+app.use(scopePerRequest(DIContainer));
 
 app.use(express.json({limit:'100mb'}));
 app.use(bodyParser.urlencoded({
@@ -12,7 +16,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 app.use(cors());
-app.use('/posts', postsRoutes);
+app.use('/posts', PostsRoutes);
 
 app.use(errorHandler);
 
