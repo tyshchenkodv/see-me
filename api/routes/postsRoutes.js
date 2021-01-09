@@ -1,10 +1,19 @@
 const express = require('express');
 const router = express.Router();
+const Config = require('../config');
 
-router.get('/', (req, res) => {
+const config = new Config();
+const connection = config.getConfig('CONNECTION');
+const knex = require('knex')({
+    client: 'pg',
+    connection: connection,
+});
+
+router.get('/', async (req, res) => {
+    const posts = await knex.select('*').from('posts');
+
     return res.status(200).send({
-        post1: 'post1',
-        post2: 'post2',
+        posts: posts,
     });
 });
 router.post('/', (req, res) => {
@@ -12,10 +21,13 @@ router.post('/', (req, res) => {
         message: 'Post added',
     });
 });
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
     const { id } = req.params;
+
+    const post = await knex.select('*').from('posts').where('id', id);
+
     return res.status(200).send({
-        post: `post${id}`,
+        post: post,
     });
 });
 router.put('/:id', (req, res) => {
