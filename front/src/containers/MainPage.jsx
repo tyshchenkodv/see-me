@@ -1,12 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '../components/Header';
-import Content from '../components/Content';
+import Articles from '../components/Articles';
+import AddArticle from '../components/AddArticle';
+import Profile from '../components/Profile';
 
-function MainPage ({userName}) {
+function MainPage () {
+    const [page, setPage] = useState('articles');
+    const [userFirstName, setUserFitstName] = useState(null);
+    const [userSecondName, setUserSecondName] = useState(null);
+
     return (
         <>
-            <Header userName={userName}/>
-            <Content/>
+            <Header userFirstName={userFirstName} userSecondName={userSecondName} setPage={setPage}/>
+            { page === 'articles' && <Articles/> }
+            { page === 'addArticle' && <AddArticle/> }
+            { page === 'profile' && <Profile setUserFitstName={setUserFitstName} setUserSecondName={setUserSecondName}/> }
         </>
     );
 }

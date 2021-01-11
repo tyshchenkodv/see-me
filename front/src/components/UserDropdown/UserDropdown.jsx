@@ -1,7 +1,12 @@
 import React from 'react';
 
-export default function UserDropdown ({userName}) {
+export default function UserDropdown ({userFirstName, userSecondName}) {
     return (
-        <p>User dropdown with {userName}</p>
+        <>
+            {(!userFirstName && !userSecondName) &&
+            <a className="btn btn-outline-primary">Meet me</a>}
+            {(userFirstName || userSecondName) &&
+            <a className="btn btn-outline-primary">Hello, {userFirstName + userSecondName}</a>}
+        </>
     );
 }
