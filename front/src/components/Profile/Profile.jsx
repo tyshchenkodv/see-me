@@ -1,9 +1,8 @@
 import React from 'react';
 
-export default function Profile ({setUserFitstName, setUserSecondName}) {
+export default function Profile ({setUserName}) {
     const handleSubmit = (event) => {
-        setUserFitstName(event.target.input1.value);
-        setUserSecondName(event.target.input2.value);
+        setUserName(event.target.input1.value + ' ' + event.target.input2.value);
 
         event.preventDefault();
     }
