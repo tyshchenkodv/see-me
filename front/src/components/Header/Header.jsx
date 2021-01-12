@@ -4,15 +4,7 @@ import UserDropdown from '../UserDropdown';
 import { ARTICLES_PAGE, ADD_ARTICLE_PAGE, PROFILE_PAGE } from '../../constants/pages';
 
 export default function Header ({userName, setPage}) {
-    const handleArticlesPageClick = () => {
-        setPage(ARTICLES_PAGE);
-    }
-    const handleAddArticlePageClick = () => {
-        setPage(ADD_ARTICLE_PAGE);
-    }
-    const handleProfilePageClick = () => {
-        setPage(PROFILE_PAGE);
-    }
+    const changePageClick = (page) => () => setPage(page);
 
     return (
         <header>
@@ -20,10 +12,10 @@ export default function Header ({userName, setPage}) {
                 className="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
                 <Logo/>
                 <nav className="my-2 my-md-0 mr-md-3">
-                    <a className="p-2 text-dark" onClick={handleArticlesPageClick}>Articles</a>
-                    <a className="p-2 text-dark" onClick={handleAddArticlePageClick}>Add article</a>
+                    <a className="p-2 text-dark" onClick={changePageClick(ARTICLES_PAGE)}>Articles</a>
+                    <a className="p-2 text-dark" onClick={changePageClick(ADD_ARTICLE_PAGE)}>Add article</a>
                 </nav>
-                <div onClick={handleProfilePageClick}>
+                <div onClick={changePageClick(PROFILE_PAGE)}>
                     <UserDropdown userName={userName}/>
                 </div>
             </div>
