@@ -4,8 +4,20 @@ dotenv.config();
 module.exports = class Config {
     constructor() {
         this.PORT = process.env.PORT;
+        this.HOST = process.env.HOST;
+        this.USER = process.env.USER;
+        this.PASSWORD = process.env.PASSWORD;
+        this.DATABASE = process.env.DATABASE;
     }
-    get getPort(){
-        return this.PORT;
+    getConfig( param ){
+        switch ( param ){
+            case 'PORT': return this.PORT;
+            case 'CONNECTION': return {
+                host: this.HOST,
+                user: this.USER,
+                password: this.PASSWORD,
+                database: this.DATABASE
+            };
+        }
     }
 }
