@@ -1,9 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-export default function Profile ({setUserName}) {
+function Profile ({setUserName}) {
     const handleSubmit = (event) => {
         setUserName(event.target.input1.value + ' ' + event.target.input2.value);
-
         event.preventDefault();
     }
     return (
@@ -26,3 +26,9 @@ export default function Profile ({setUserName}) {
         </form>
     );
 }
+
+Profile.propTypes = {
+    setUserName: PropTypes.func,
+};
+
+export default Profile;
