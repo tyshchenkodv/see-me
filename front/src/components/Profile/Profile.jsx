@@ -28,7 +28,7 @@ function Profile ({setUserName}) {
 }
 
 Profile.propTypes = {
-    setUserName: PropTypes.func,
+    setUserName: PropTypes.func.isRequired,
 };
 
 export default Profile;

@@ -25,9 +25,13 @@ function Header ({userName, setPage}) {
     );
 }
 
+Header.defaultProps = {
+    userName: null,
+};
+
 Header.propTypes = {
     userName: PropTypes.string,
-    setPage: PropTypes.func,
+    setPage: PropTypes.func.isRequired,
 };
 
 export default Header;

@@ -9,6 +9,10 @@ function UserDropdown ({userName}) {
     );
 }
 
+UserDropdown.defaultProps = {
+    userName: null,
+};
+
 UserDropdown.propTypes = {
     userName: PropTypes.string,
 };
