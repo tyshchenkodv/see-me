@@ -1,9 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import Logo from '../Logo';
 import UserDropdown from '../UserDropdown';
 import { ARTICLES_PAGE, ADD_ARTICLE_PAGE, PROFILE_PAGE } from '../../constants/pages';
 
-export default function Header ({userName, setPage}) {
+function Header ({userName, setPage}) {
     const changePageClick = (page) => () => setPage(page);
 
     return (
@@ -22,3 +24,14 @@ export default function Header ({userName, setPage}) {
         </header>
     );
 }
+
+Header.defaultProps = {
+    userName: null,
+};
+
+Header.propTypes = {
+    userName: PropTypes.string,
+    setPage: PropTypes.func.isRequired,
+};
+
+export default Header;
