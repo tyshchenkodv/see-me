@@ -8,11 +8,6 @@ module.exports = class Config {
         this.USER = process.env.USER;
         this.PASSWORD = process.env.PASSWORD;
         this.DATABASE = process.env.DATABASE;
-        this.SECRET = process.env.SECRET;
-        this.EXPIRESIN = process.env.EXPIRESIN;
-        this.FRONTHOST = process.env.FRONTHOST;
-        this.GMAIL_USER = process.env.GMAIL;
-        this.GMAIL_PASSWORD = process.env.GMAILPASSWORD;
     }
     getConfig( param ){
         switch ( param ){
@@ -22,16 +17,6 @@ module.exports = class Config {
                 user: this.USER,
                 password: this.PASSWORD,
                 database: this.DATABASE
-            };
-            case 'NODE_HOST': return this.HOST + ':' + this.PORT;
-            case 'FRONT_HOST': return this.FRONTHOST;
-            case 'MAILER_USER': return {
-                user: this.GMAIL_USER,
-                pass: this.GMAIL_PASSWORD,
-            };
-            case 'AUTH': return {
-                secret: this.SECRET,
-                expiresIn: this.EXPIRESIN,
             };
         }
     }

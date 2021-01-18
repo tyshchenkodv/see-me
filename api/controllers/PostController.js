@@ -1,8 +1,6 @@
-const DIContainer = require('../services/DIContainer');
-const db = DIContainer.resolve('db');
-
 module.exports = {
     list: async (req, res) => {
+        const db = req.container.resolve('db');
         const posts = await db.select('*').from('posts');
 
         return res.status(200).send({
@@ -12,6 +10,7 @@ module.exports = {
     item: async (req, res, next) => {
         const { id } = req.params;
 
+        const db = req.container.resolve('db');
         const item = await db
             .select('*')
             .from('posts')
@@ -30,6 +29,7 @@ module.exports = {
     update: async (req, res, next) => {
         const { id } = req.params;
 
+        const db = req.container.resolve('db');
         const item = await db
             .select('*')
             .from('posts')
@@ -58,6 +58,7 @@ module.exports = {
     delete: async (req, res, next) => {
         const { id } = req.params;
 
+        const db = req.container.resolve('db');
         const item = await db
             .select('*')
             .from('posts')
@@ -74,6 +75,7 @@ module.exports = {
         return res.status(204).send();
     },
     create: async (req, res, next) => {
+        const db = req.container.resolve('db');
         try {
             const data = req.body;
 
