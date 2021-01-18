@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const DIContainer = require('../services/DIContainer');
+const mailer = DIContainer.resolve('mailer');
 const db = DIContainer.resolve('db');
 const auth = DIContainer.resolve('config').getConfig('AUTH');
 const InternalErrorException = DIContainer.resolve('internalErrorException');
@@ -65,20 +66,46 @@ module.exports = {
         }
     },
     signup: async (req, res, next) => {
+        const { email } = req.body;
+
+        let user = await db('users').where({
+            email,
+        }).first();
+
+        if(user) {
+            return next(new BadRequestException('Email already exists!'))
+        }
+
         try {
             await db('users')
                 .insert({
                     firstName: req.body.firstName,
                     secondName: req.body.secondName,
-                    email: req.body.email,
+                    email: email,
                     phone: req.body.phone,
                     university: req.body.university,
                     password: bcrypt.hashSync(req.body.password, 8),
+                    verified: false,
                 });
         }catch (error){
             return next(new InternalErrorException(error));
         }
 
+        user = await db('users').where({
+            email,
+        }).first();
+
+        const link = `http://${DIContainer.resolve('config').getConfig('NODE_HOST')}/auth/verify/` + user.id;
+        const message = `Hello,<br> Please Click on the link to verify your email.<br><a href='${link}'>Click here to verify</a>`;
+
+        await mailer.send(email, 'Please confirm your email', message);
+
         return res.status(201).send({message: 'User was registered!'});
+    },
+    async verify(req, res) {
+        const { id } = req.params;
+        await db('users').where({id}).update({verified: true});
+
+        return res.redirect(`${DIContainer.resolve('config').getConfig('FRONT_HOST')}/login`);
     },
 }
