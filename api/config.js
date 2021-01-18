@@ -8,6 +8,8 @@ module.exports = class Config {
         this.USER = process.env.USER;
         this.PASSWORD = process.env.PASSWORD;
         this.DATABASE = process.env.DATABASE;
+        this.SECRET = process.env.SECRET;
+        this.EXPIRESIN = process.env.EXPIRESIN;
     }
     getConfig( param ){
         switch ( param ){
@@ -17,6 +19,10 @@ module.exports = class Config {
                 user: this.USER,
                 password: this.PASSWORD,
                 database: this.DATABASE
+            };
+            case 'AUTH': return {
+                secret: this.SECRET,
+                expiresIn: this.EXPIRESIN,
             };
         }
     }
