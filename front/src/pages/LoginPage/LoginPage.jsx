@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function LoginPage({setIsLoggedIn}) {
+function LoginPage({ history }) {
     const changeAuth = () => {
-        setIsLoggedIn(true);
+        window.localStorage.setItem('isLoggedIn', 'true');
+        history.push('/');
     }
 
     return(
@@ -12,10 +13,10 @@ function LoginPage({setIsLoggedIn}) {
             <button type='button' className='btn btn-primary' onClick={changeAuth}>Sign In</button>
         </>
     );
-};
+}
 
 LoginPage.propTypes = {
-    setIsLoggedIn: PropTypes.func.isRequired,
-};
+    history: PropTypes.object.isRequired,
+}
 
 export default LoginPage;
