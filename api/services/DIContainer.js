@@ -6,6 +6,7 @@ const NotFoundException = require('../exceptions/NotFoundException');
 const BadRequestException = require('../exceptions/BadRequestException');
 const InternalErrorException = require('../exceptions/InternalErrorException');
 const UnauthorizedException = require('../exceptions/UnauthorizedException');
+const ForbiddenExceptions = require('../exceptions/ForbiddenException');
 
 const container = createContainer();
 container.register({
@@ -16,6 +17,7 @@ container.register({
     badRequestException: asValue(BadRequestException),
     internalErrorException: asValue(InternalErrorException),
     unauthorizedException: asValue(UnauthorizedException),
+    forbiddenExceptions: asValue(ForbiddenExceptions),
 });
 
 module.exports = container;
