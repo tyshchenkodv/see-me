@@ -13,6 +13,12 @@ module.exports = async (req, res, next) => {
             const user = await db('users').where({id: payload.id}).first();
 
             if(user){
+                user.permissions = ['updateOwnPost', 'deleteOwnPost'];
+
+                if (user.role === true) {
+                    user.permissions.push('updateAnyPost', 'deleteAnyPost');
+                }
+
                 req.user = user;
             }
         }
