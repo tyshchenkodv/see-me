@@ -10,7 +10,7 @@ module.exports = async (req, res, next) => {
         const payload = jwt.verify(req.header('access_token'), auth.secret);
 
         if(payload){
-            const user = await db('users').where({id: payload.id});
+            const user = await db('users').where({id: payload.id}).first();
 
             if(user){
                 req.user = user;
