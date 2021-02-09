@@ -2,10 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 function Profile ({setUserName}) {
+
     const handleSubmit = (event) => {
         setUserName(event.target.input1.value + ' ' + event.target.input2.value);
         event.preventDefault();
     }
+
     return (
         <form onSubmit={handleSubmit}>
             <div className="form-group">
