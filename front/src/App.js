@@ -9,6 +9,8 @@ import ProfilePage from './pages/ProfilePage';
 import Header from './components/Header';
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/Home';
+import SignInPage from "./pages/SignInPage";
+import SignUpPage from "./pages/SignUpPage";
 import ErrorBoundary from './errorBoundary/ErrorBoundary';
 
 function App ({ location: { pathname }, history }){
@@ -24,7 +26,7 @@ function App ({ location: { pathname }, history }){
     }
 
     useEffect(() => {
-        checkAuth();
+        //checkAuth();
     });
 
     return (
@@ -34,6 +36,8 @@ function App ({ location: { pathname }, history }){
                 <Switch>
                     <Route exact path="/" component={ HomePage }/>
                     <Route exact path="/login" component={ LoginPage } />
+                    <Route exact path="/signin" component={ SignInPage } />
+                    <Route exact path="/signup" component={ SignUpPage } />
                     <Route exact path="/articles" component={ ArticlesPage }/>
                     <Route exact path="/articles/add" component={ AddArticlePage }/>
                     <Route exact path="/profiles">
