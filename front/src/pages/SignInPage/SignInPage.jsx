@@ -18,15 +18,21 @@ function SignInPage({ history }) {
     const classes = useStyles();
 
     const responseGoogle = async ({ profileObj }) => {
-        console.log(profileObj);
         const { data } = await signInGoogle(profileObj);
-        console.log(data);
+
+        if (data.token) {
+            window.localStorage.setItem('token', data.token);
+            history.push('/');
+        }
     }
 
     const responseFacebook = async (response) => {
-        console.log(response);
         const { data } = await signInFacebook(response);
-        console.log(data);
+
+        if (data.token) {
+            window.localStorage.setItem('token', data.token);
+            history.push('/');
+        }
     }
 
     const handleSubmit = async (event) => {

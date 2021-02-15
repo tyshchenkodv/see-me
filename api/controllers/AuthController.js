@@ -82,8 +82,6 @@ module.exports = {
                     firstName: req.body.firstName,
                     secondName: req.body.secondName,
                     email: email,
-                    phone: req.body.phone,
-                    university: req.body.university,
                     password: bcrypt.hashSync(req.body.password, 8),
                     verified: false,
                 });
@@ -100,7 +98,7 @@ module.exports = {
 
         await mailer.send(email, 'Please confirm your email', message);
 
-        return res.status(201).send({message: 'User was registered!'});
+        return res.status(201).send({message: 'User was registered! Please verify your email!'});
     },
     async verify(req, res) {
         const { id } = req.params;

@@ -9,9 +9,11 @@ function Header ({userName}) {
     const [isLogged, setIsLogged] = useState(false);
 
     useEffect(()=>{
-        const token = window.localStorage.getItem('accessToken');
+        const token = window.localStorage.getItem('token');
         if (token){
-            setIsLogged(true);
+            return setIsLogged(true);
+        }else if (!token){
+            return setIsLogged(false);
         }
     });
 
@@ -28,7 +30,7 @@ function Header ({userName}) {
             <NavLink className="p-2 text-dark" exact to='/signin' >Sign In</NavLink>
             <NavLink className="p-2 text-dark" exact to='/signup'>Sign Up</NavLink>
         </nav>
-    </>
+    </>;
 
     return (
         <header>

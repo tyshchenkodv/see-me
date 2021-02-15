@@ -7,7 +7,6 @@ import ArticlesPage from './pages/ArticlesPage';
 import AddArticlePage from './pages/AddArticlePage';
 import ProfilePage from './pages/ProfilePage';
 import Header from './components/Header';
-import LoginPage from './pages/LoginPage';
 import HomePage from './pages/Home';
 import SignInPage from "./pages/SignInPage";
 import SignUpPage from "./pages/SignUpPage";
@@ -17,16 +16,14 @@ function App ({ location: { pathname }, history }){
     const [userName, setUserName] = useState(null);
 
     const checkAuth = () => {
-        const isLoggedIn = window.localStorage.getItem('isLoggedIn') === 'true';
-        if (!isLoggedIn && pathname !== '/login') {
-            history.push('/login');
-        } else if (isLoggedIn && pathname === '/login') {
+        const token = window.localStorage.getItem('token');
+        if (token && (pathname === '/signin' || pathname === '/signup')) {
             history.push('/');
         }
     }
 
     useEffect(() => {
-        //checkAuth();
+        checkAuth();
     });
 
     return (
@@ -35,7 +32,6 @@ function App ({ location: { pathname }, history }){
                 <Header userName={userName}/>
                 <Switch>
                     <Route exact path="/" component={ HomePage }/>
-                    <Route exact path="/login" component={ LoginPage } />
                     <Route exact path="/signin" component={ SignInPage } />
                     <Route exact path="/signup" component={ SignUpPage } />
                     <Route exact path="/articles" component={ ArticlesPage }/>
