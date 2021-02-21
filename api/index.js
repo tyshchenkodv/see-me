@@ -1,8 +1,7 @@
-const Config = require('./config');
+const DIContainer = require('./services/DIContainer');
+const env = DIContainer.resolve('env');
 const app = require('./app');
 
-const config = new Config();
-
-const listen = app.listen(config.getConfig('PORT'), () => {
-    console.log(`App server is running on port ${config.getConfig('PORT')}`);
+const listen = app.listen(env.get('API_PORT'), () => {
+    console.log(`App server is running on port ${env.get('API_PORT')}`);
 });

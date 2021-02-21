@@ -1,8 +1,11 @@
 const nodemailer = require('nodemailer');
 
 module.exports = class Mailer {
-    constructor({ config, notFoundException }) {
-        this.auth = config.getConfig('MAILER_USER');
+    constructor({ env, notFoundException }) {
+        this.auth = {
+            user: env.get('GMAIL_USER'),
+            pass: env.get('GMAIL_PASSWORD'),
+        };
         this.notFoundException = notFoundException;
     }
 

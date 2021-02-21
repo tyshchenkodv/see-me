@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const DIContainer = require('../services/DIContainer');
 const mailer = DIContainer.resolve('mailer');
 const db = DIContainer.resolve('db');
-const auth = DIContainer.resolve('config').getConfig('AUTH');
+const env = DIContainer.resolve('env');
 const InternalErrorException = DIContainer.resolve('internalErrorException');
 const BadRequestException = DIContainer.resolve('badRequestException');
 
@@ -49,9 +49,9 @@ module.exports = {
                         email: user.email,
                         firstName: user.firstName,
                     },
-                    auth.secret,
+                    env.get('SECRET'),
                     {
-                        expiresIn: auth.expiresIn,
+                        expiresIn: env.get('EXPIRES_IN'),
                     },
                 );
 
@@ -93,7 +93,7 @@ module.exports = {
             email,
         }).first();
 
-        const link = `http://${DIContainer.resolve('config').getConfig('NODE_HOST')}/auth/verify/` + user.id;
+        const link = `http://${env.get('API_HOST')}/auth/verify/` + user.id;
         const message = `Hello,<br> Please Click on the link to verify your email.<br><a href='${link}'>Click here to verify</a>`;
 
         await mailer.send(email, 'Please confirm your email', message);
@@ -104,7 +104,7 @@ module.exports = {
         const { id } = req.params;
         await db('users').where({id}).update({verified: true});
 
-        return res.redirect(`${DIContainer.resolve('config').getConfig('FRONT_HOST')}/login`);
+        return res.redirect(`${env.get('FRONT_HOST')}/login`);
     },
     async facebook(req, res, next) {
         const { facebookId, name, email } = req.body;
@@ -155,9 +155,9 @@ module.exports = {
                     email: user.email,
                     firstName: user.firstName,
                 },
-                auth.secret,
+                env.get('SECRET'),
                 {
-                    expiresIn: auth.expiresIn,
+                    expiresIn: env.get('EXPIRES_IN'),
                 },
             );
 
@@ -217,9 +217,9 @@ module.exports = {
                     email: user.email,
                     firstName: user.firstName,
                 },
-                auth.secret,
+                env.get('SECRET'),
                 {
-                    expiresIn: auth.expiresIn,
+                    expiresIn: env.get('EXPIRES_IN'),
                 },
             );
 
