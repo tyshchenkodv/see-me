@@ -1,8 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Paper from '@material-ui/core/Paper';
 import { useStyles } from "./styles";
 import { NavLink } from "react-router-dom";
+import { typeOfArticlesListItem } from './propTypes';
 
 function ArticlesListItem ({ article }) {
     const classes = useStyles();
@@ -27,15 +27,7 @@ function ArticlesListItem ({ article }) {
 }
 
 ArticlesListItem.propTypes = {
-    article: PropTypes.shape(
-        PropTypes.arrayOf(
-            PropTypes.shape({
-                id: PropTypes.number.isRequired,
-                text: PropTypes.string.isRequired,
-                title: PropTypes.string.isRequired,
-                userId: PropTypes.number.isRequired,
-        }).isRequired
-    ).isRequired).isRequired
+    article: typeOfArticlesListItem,
 };
 
 export default ArticlesListItem;
