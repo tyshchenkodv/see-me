@@ -1,5 +1,7 @@
 const { asClass, asValue, createContainer} = require('awilix');
-const Config = require('../config');
+const env = require('env-wrapper');
+
+env.load();
 const Database = require('./database');
 const Mailer = require('./mailer');
 const NotFoundException = require('../exceptions/NotFoundException');
@@ -10,7 +12,7 @@ const ForbiddenExceptions = require('../exceptions/ForbiddenException');
 
 const container = createContainer();
 container.register({
-    config: asClass(Config),
+    env: asValue(env),
     db: asClass(Database),
     mailer: asClass(Mailer),
     notFoundException: asValue(NotFoundException),

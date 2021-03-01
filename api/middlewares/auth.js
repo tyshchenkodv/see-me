@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const DIContainer = require('../services/DIContainer');
-const auth = DIContainer.resolve('config').getConfig('AUTH');
+const env = DIContainer.resolve('env');
 const db = DIContainer.resolve('db');
 const UnauthorizedException = DIContainer.resolve('unauthorizedException');
 
