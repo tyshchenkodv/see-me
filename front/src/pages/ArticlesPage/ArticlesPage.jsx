@@ -1,21 +1,19 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import ArticlesListItem from '../../components/ArticlesListItem';
 import { getAllArticles } from './apiCalls';
+import { useQuery } from "react-query";
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 export default function ArticlesPage() {
-    const [articlesList, setArticlesList] = useState([]);
-
-    const getArticles = async () => {
+    const { data: response, isFetching} = useQuery('articles', () => {
         const token = window.localStorage.getItem('token');
-        const { data: { posts } } = await getAllArticles(token);
-        setArticlesList(posts);
-    }
-
-    useEffect(getArticles, []);
+        return getAllArticles(token);
+    });
+    const { posts } = response?.data || [];
 
     return (
-        articlesList.map((article, key) =>
-            <ArticlesListItem article = { article } key={key}/>
-        )
+        !isFetching ? posts.map((post, key) =>
+            <ArticlesListItem article = { post } key={key}/>
+        ) : <LinearProgress />
     );
 }
