@@ -3,7 +3,13 @@ const db = DIContainer.resolve('db');
 
 module.exports = {
     list: async (req, res) => {
-        const posts = await db.select('*').from('posts');
+        const posts = await db.select('posts.id',
+            'title',
+            'text',
+            'userId',
+            'firstName',
+            'secondName').from('posts')
+                .innerJoin('users', 'users.id', 'posts.userId');
 
         return res.status(200).send({
             posts: posts,
