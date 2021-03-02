@@ -84,7 +84,11 @@ module.exports = {
             const data = req.body;
 
             await db('articles')
-                .insert(data);
+                .insert({
+                    title: data.title,
+                    text: data.text,
+                    userId: req.user.id,
+                });
         } catch (error) {
             const BadRequestException = req.container.resolve('badRequestException');
             return next(new BadRequestException(error));

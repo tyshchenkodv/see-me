@@ -17,8 +17,8 @@ import {signIn, signInFacebook, signInGoogle} from './apiCalls';
 function SignInPage({ history }) {
     const classes = useStyles();
 
-    const responseGoogle = async ({ profileObj }) => {
-        const { data } = await signInGoogle(profileObj);
+    const responseGoogle = async ({profileObj}) => {
+        const {data} = await signInGoogle(profileObj);
 
         if (data.token) {
             window.localStorage.setItem('token', data.token);
@@ -27,7 +27,7 @@ function SignInPage({ history }) {
     }
 
     const responseFacebook = async (response) => {
-        const { data } = await signInFacebook(response);
+        const {data} = await signInFacebook(response);
 
         if (data.token) {
             window.localStorage.setItem('token', data.token);
@@ -43,7 +43,7 @@ function SignInPage({ history }) {
             password: event.target.password.value,
         };
 
-        const { data } = await signIn(reqData);
+        const {data} = await signIn(reqData);
 
         if (data.token) {
             window.localStorage.setItem('token', data.token);
