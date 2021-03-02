@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const PostsRoutes = require('./routes/postsRoutes');
+const ArticleRoutes = require('./routes/articlesRoutes');
 const AuthRoutes = require('./routes/authRoutes');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 
 app.use(cors());
 app.use('/auth', AuthRoutes);
-app.use('/posts', PostsRoutes);
+app.use('/articles', ArticleRoutes);
 
 app.use(errorHandler);
 
