@@ -10,12 +10,12 @@ router.get('/:id', ArticleController.item);
 router.put('/:id', auth, checkAuthorized([
     { permission: 'updateAnyArticle' },
     { permission: 'updateOwnArticle',
-      own: {table: 'posts', column: 'userId'}}
+      own: {table: 'articles', column: 'userId'}}
 ]), ArticleController.update);
 router.delete('/:id', auth, checkAuthorized([
     { permission: 'deleteAnyArticle' },
     { permission: 'deleteOwnArticle',
-      own: {table: 'posts', column: 'userId'}}
+      own: {table: 'articles', column: 'userId'}}
 ]), ArticleController.delete);
 
 module.exports = router;

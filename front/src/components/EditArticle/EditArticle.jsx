@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import * as yup from 'yup';
 import { Formik, Field, Form } from 'formik';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
 
-function AddArticle ({createArticle, history}) {
+function EditArticle ({updateArticle, article, history}) {
     const handleSubmit = async formData => {
-        await createArticle(formData);
+        await updateArticle({formData});
         history.push('/articles');
     }
 
@@ -25,7 +25,9 @@ function AddArticle ({createArticle, history}) {
     return (
         <>
             <Formik
-                initialValues={{title: '', text: ''}}
+                initialValues={{title: article?.title || '',
+                    text: article?.text || '',
+                    available: article?.available || ''}}
                 onSubmit={handleSubmit}
                 validationSchema={articleValidation}
             >
@@ -63,7 +65,7 @@ function AddArticle ({createArticle, history}) {
                                 </div>
                             )}
                         </Field>
-                        <button type="submit" className="btn btn-primary">Create article</button>
+                        <button type="submit" className="btn btn-primary">Update article</button>
                     </Form>
                 )}
             </Formik>
@@ -71,9 +73,10 @@ function AddArticle ({createArticle, history}) {
     );
 }
 
-AddArticle.propTypes = {
-    createArticle: PropTypes.func.isRequired,
+EditArticle.propTypes = {
+    updateArticle: PropTypes.func.isRequired,
+    article: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
 }
 
-export default AddArticle;
+export default EditArticle;

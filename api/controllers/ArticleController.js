@@ -87,6 +87,7 @@ module.exports = {
                 .insert({
                     title: data.title,
                     text: data.text,
+                    available: data.available,
                     userId: req.user.id,
                 });
         } catch (error) {
