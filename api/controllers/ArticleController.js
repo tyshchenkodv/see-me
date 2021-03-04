@@ -3,13 +3,13 @@ const db = DIContainer.resolve('db');
 
 module.exports = {
     list: async (req, res) => {
-        const posts = await db.select('posts.id',
+        const posts = await db.select('articles.id',
             'title',
             'text',
             'userId',
             'firstName',
-            'secondName').from('posts')
-                .innerJoin('users', 'users.id', 'posts.userId');
+            'secondName').from('articles')
+                .innerJoin('users', 'users.id', 'articles.userId');
 
         return res.status(200).send({
             posts: posts,
@@ -20,7 +20,7 @@ module.exports = {
 
         const item = await db
             .select('*')
-            .from('posts')
+            .from('articles')
             .where('id', id)
             .first();
 
@@ -38,7 +38,7 @@ module.exports = {
 
         const item = await db
             .select('*')
-            .from('posts')
+            .from('articles')
             .where('id', id)
             .first();
 
@@ -50,7 +50,7 @@ module.exports = {
         try {
 
             const data = req.body;
-            await db('posts')
+            await db('articles')
                 .where('id', id)
                 .update(data);
 
@@ -66,7 +66,7 @@ module.exports = {
 
         const item = await db
             .select('*')
-            .from('posts')
+            .from('articles')
             .where('id', id)
             .first();
 
@@ -75,7 +75,7 @@ module.exports = {
             return next(new NotFoundException());
         }
 
-        await db('posts').where('id', id).del();
+        await db('articles').where('id', id).del();
 
         return res.status(204).send();
     },
@@ -83,8 +83,13 @@ module.exports = {
         try {
             const data = req.body;
 
-            await db('posts')
-                .insert(data);
+            await db('articles')
+                .insert({
+                    title: data.title,
+                    text: data.text,
+                    available: data.available,
+                    userId: req.user.id,
+                });
         } catch (error) {
             const BadRequestException = req.container.resolve('badRequestException');
             return next(new BadRequestException(error));

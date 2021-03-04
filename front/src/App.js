@@ -12,7 +12,7 @@ import SignInPage from "./pages/SignInPage";
 import SignUpPage from "./pages/SignUpPage";
 import ErrorBoundary from './errorBoundary/ErrorBoundary';
 
-function App ({ location: { pathname }, history }){
+function App ({ location: { pathname }, history }) {
     const [userName, setUserName] = useState(null);
 
     const checkAuth = () => {
@@ -31,11 +31,11 @@ function App ({ location: { pathname }, history }){
             <ErrorBoundary>
                 <Header userName={userName}/>
                 <Switch>
-                    <Route exact path="/" component={ HomePage }/>
-                    <Route exact path="/signin" component={ SignInPage } />
-                    <Route exact path="/signup" component={ SignUpPage } />
-                    <Route exact path="/articles" component={ ArticlesPage }/>
-                    <Route exact path="/articles/add" component={ AddArticlePage }/>
+                    <Route exact path="/" component={HomePage}/>
+                    <Route exact path="/signin" component={SignInPage}/>
+                    <Route exact path="/signup" component={SignUpPage}/>
+                    <Route exact path="/articles" component={ArticlesPage}/>
+                    <Route exact path="/articles/add/:id" component={AddArticlePage}/>
                     <Route exact path="/profiles">
                         <ProfilePage setUserName={setUserName}/>
                     </Route>

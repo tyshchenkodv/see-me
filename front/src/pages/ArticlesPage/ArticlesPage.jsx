@@ -1,21 +1,42 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import ArticlesListItem from '../../components/ArticlesListItem';
 import { getAllArticles } from './apiCalls';
+import { useQuery } from "react-query";
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 export default function ArticlesPage() {
-    const [articlesList, setArticlesList] = useState([]);
+    const [articles, setArticles] = useState([]);
+    const [visible, setVisible] = useState(5);
 
-    const getArticles = async () => {
+    const loadMore = useCallback(() => {
+        setVisible(visible + 5);
+    }, []);
+
+    const {data: response, isFetching} = useQuery('articles', () => {
         const token = window.localStorage.getItem('token');
-        const { data: { posts } } = await getAllArticles(token);
-        setArticlesList(posts);
-    }
+        return getAllArticles(token);
+    });
 
-    useEffect(getArticles, []);
+    useEffect(() => {
+        if (response) {
+            const {posts} = response?.data || [];
+            setArticles(posts);
+        }
+    }, [isFetching]);
 
     return (
-        articlesList.map((article, key) =>
-            <ArticlesListItem article = { article } key={key}/>
-        )
-    );
+        <>
+            {!isFetching ?
+                <div>
+                    {articles.slice(0, visible).map((article, index) => {
+                        return <ArticlesListItem article={article} key={index}/>
+                    })}
+                    <button onClick={loadMore}
+                            type="button"
+                            className="btn btn-default"
+                            hidden={visible >= articles.length}>Load more
+                    </button>
+                </div>
+                : <LinearProgress/>}
+        </>);
 }

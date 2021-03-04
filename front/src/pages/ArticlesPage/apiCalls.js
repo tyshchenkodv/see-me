@@ -1,7 +1,7 @@
 import { apiClient } from '../../config/axios';
 
 async function getAllArticles(token) {
-    return apiClient.get('/posts',
+    return apiClient.get('/articles',
         {
             headers: {
                 'Content-Type': 'application/json',

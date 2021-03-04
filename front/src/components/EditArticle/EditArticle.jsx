@@ -4,9 +4,9 @@ import * as yup from 'yup';
 import { Formik } from 'formik';
 import AddEditArticleForm from '../AddEditArticleForm';
 
-function AddArticle ({createArticle, history}) {
+function EditArticle ({updateArticle, article, history}) {
     const handleSubmit = async formData => {
-        await createArticle(formData);
+        await updateArticle({formData});
         history.push('/articles');
     }
 
@@ -24,7 +24,9 @@ function AddArticle ({createArticle, history}) {
     return (
         <>
             <Formik
-                initialValues={{title: '', text: ''}}
+                initialValues={{title: article?.title || '',
+                    text: article?.text || '',
+                    available: article?.available || ''}}
                 onSubmit={handleSubmit}
                 validationSchema={articleValidation}
             >
@@ -40,9 +42,10 @@ function AddArticle ({createArticle, history}) {
     );
 }
 
-AddArticle.propTypes = {
-    createArticle: PropTypes.func.isRequired,
+EditArticle.propTypes = {
+    updateArticle: PropTypes.func.isRequired,
+    article: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
 }
 
-export default AddArticle;
+export default EditArticle;

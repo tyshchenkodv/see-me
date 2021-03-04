@@ -7,16 +7,16 @@ const UnauthorizedException = DIContainer.resolve('unauthorizedException');
 module.exports = async (req, res, next) => {
     try {
 
-        const payload = jwt.verify(req.header('token'), auth.secret);
+        const payload = jwt.verify(req.header('token'), env.get('SECRET'));
 
         if(payload){
             const user = await db('users').where({id: payload.id}).first();
 
             if(user){
-                user.permissions = ['updateOwnPost', 'deleteOwnPost'];
+                user.permissions = ['updateOwnArticle', 'deleteOwnArticle'];
 
-                if (user.role === true) {
-                    user.permissions.push('updateAnyPost', 'deleteAnyPost');
+                if (user.admin === true) {
+                    user.permissions.push('updateAnyArticle', 'deleteAnyArticle');
                 }
 
                 req.user = user;

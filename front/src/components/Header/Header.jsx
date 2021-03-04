@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 
@@ -20,7 +20,7 @@ function Header ({userName}) {
     const authButtons = <>
         <nav className="my-2 my-md-0 mr-md-3">
             <NavLink className="p-2 text-dark" exact to='/articles' >Articles</NavLink>
-            <NavLink className="p-2 text-dark" exact to='/articles/add'>Add article</NavLink>
+            <NavLink className="p-2 text-dark" exact to='/articles/add/new'>Add article</NavLink>
         </nav>
         <UserDropdown userName={userName}/>
     </>;
