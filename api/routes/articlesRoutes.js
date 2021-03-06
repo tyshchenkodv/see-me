@@ -12,14 +12,14 @@ router.get('/', ArticleController.list);
 router.post('/', auth,
     body('title')
         .custom(value => isUnique('articles', 'title', value))
-        .withMessage('Post with such title already exists')
+        .withMessage('Article with such title already exists')
         .not().isEmpty({ignore_whitespace: true})
         .withMessage('Article title can\'t be empty')
         .isLength({max: 255})
         .withMessage('Article title can\'t be longer than 255 characters'),
     body('text')
         .not().isEmpty({ignore_whitespace: true})
-        .withMessage('Post text can\'t be empty'),
+        .withMessage('Article text can\'t be empty'),
     validationErros, ArticleController.create);
 
 router.get('/:id', ArticleController.item);
@@ -30,10 +30,12 @@ router.put('/:id', auth, checkAuthorized([
       own: {table: 'articles', column: 'userId'}}
     ]),
     body('title')
-    .not().isEmpty({ignore_whitespace: true})
-    .withMessage('Article title can\'t be empty')
-    .isLength({max: 255})
-    .withMessage('Article title can\'t be longer than 255 characters'),
+        .custom((value, {req}) =>
+            isUnique('articles', 'title', value, req.params.id))
+        .not().isEmpty({ignore_whitespace: true})
+        .withMessage('Article title can\'t be empty')
+        .isLength({max: 255})
+        .withMessage('Article title can\'t be longer than 255 characters'),
     body('text')
         .not({ignore_whitespace: true}).isEmpty()
         .withMessage('Article text can\'t be empty'),
