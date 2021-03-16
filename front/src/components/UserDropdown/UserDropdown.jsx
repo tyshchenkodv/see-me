@@ -1,21 +1,72 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { NavLink } from 'react-router-dom';
+import React, {useState} from 'react';
+import { IconButton, Menu, MenuItem } from "@material-ui/core";
+import { AccountCircle } from '@material-ui/icons';
+import PropTypes from "prop-types";
 
-function UserDropdown ({userName}) {
+function UserDropdown ({ history }) {
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+
+    const handleMenu = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleProfile = () => {
+        setAnchorEl(null);
+        history.push('/profile');
+    };
+
+    const handleEditProfile = () => {
+        setAnchorEl(null);
+        history.push('/profile/edit');
+    };
+
+    const handleLogout = () => {
+        setAnchorEl(null);
+        window.localStorage.removeItem('token');
+        history.push('/signin');
+    };
+
     return (
-        <NavLink exact to='/profiles' className="btn btn-outline-primary">
-            { userName ? `Hello, ${userName}` : 'Meet me' }
-        </NavLink>
+        <div>
+            <IconButton
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleMenu}
+                color="inherit"
+            >
+                <AccountCircle />
+            </IconButton>
+            <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+                open={open}
+                onClose={handleClose}
+            >
+                <MenuItem onClick={handleProfile}>Profile</MenuItem>
+                <MenuItem onClick={handleEditProfile}>Edit profile</MenuItem>
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            </Menu>
+        </div>
     );
 }
 
-UserDropdown.defaultProps = {
-    userName: null,
-};
-
 UserDropdown.propTypes = {
-    userName: PropTypes.string,
-};
+    history: PropTypes.object.isRequired,
+}
 
 export default UserDropdown;

@@ -1,54 +1,92 @@
-import React, { useState, useEffect, useContext } from 'react';
-import PropTypes from 'prop-types';
+import React, {useState, useEffect, useCallback} from 'react';
 import { NavLink } from 'react-router-dom';
+import { AppBar, Toolbar, Typography, Button } from '@material-ui/core';
+import { useStyles } from './styles';
+import UserDropdown from "../UserDropdown/UserDropdown";
+import PropTypes from "prop-types";
+import {useMutation} from "react-query";
+import {createArticleRequest} from "../../pages/AddArticlePage/apiCalls";
+import AddArticle from "../AddArticle";
 
-import Logo from '../Logo';
-import UserDropdown from '../UserDropdown';
-
-function Header ({userName}) {
+function Header ({ history }) {
+    const classes = useStyles();
     const [isLogged, setIsLogged] = useState(false);
+    const [open, setOpen] = useState(false);
+    const {mutate: createArticle} = useMutation(createArticleRequest);
+    const token = window.localStorage.getItem('token');
 
-    useEffect(()=>{
-        const token = window.localStorage.getItem('token');
-        if (token){
+    const onCreateArticle = useCallback(async formData => {
+        try {
+            await createArticle({token, formData});
+        } catch (e) {
+            console.log(e);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (token) {
             return setIsLogged(true);
-        }else if (!token){
+        } else if (!token) {
             return setIsLogged(false);
         }
     });
 
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
     const authButtons = <>
-        <nav className="my-2 my-md-0 mr-md-3">
-            <NavLink className="p-2 text-dark" exact to='/articles' >Articles</NavLink>
-            <NavLink className="p-2 text-dark" exact to='/articles/add/new'>Add article</NavLink>
-        </nav>
-        <UserDropdown userName={userName}/>
-    </>;
+        <Button
+            color="inherit"
+            component={NavLink}
+            exact to='/articles'
+        >
+            Articles
+        </Button>
+        <Button
+            color="inherit"
+            onClick={handleClickOpen}
+        >
+            Add article
+        </Button>
+        <AddArticle history={history}
+                    createArticle={onCreateArticle}
+                    setOpen={setOpen}
+                    open={open}/>
+        <UserDropdown history={history}/>
+    </>
 
     const nonAuthButtons = <>
-        <nav className="my-2 my-md-0 mr-md-3">
-            <NavLink className="p-2 text-dark" exact to='/signin' >Sign In</NavLink>
-            <NavLink className="p-2 text-dark" exact to='/signup'>Sign Up</NavLink>
-        </nav>
+        <Button
+            color="inherit"
+            component={NavLink}
+            exact to='/signup'
+        >
+            Sign Up
+        </Button>
+        <Button
+            color="inherit"
+            component={NavLink}
+            exact to='/signin'
+        >
+            Sign In
+        </Button>
     </>;
 
     return (
-        <header>
-            <div
-                className="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
-                <Logo/>
-                { isLogged ? authButtons : nonAuthButtons }
-            </div>
-        </header>
+        <AppBar position="static" color='default'>
+            <Toolbar>
+                <Typography variant="h6" className={classes.title}>
+                    SeeME
+                </Typography>
+                {isLogged ? authButtons : nonAuthButtons}
+            </Toolbar>
+        </AppBar>
     );
 }
 
-Header.defaultProps = {
-    userName: null,
-};
-
 Header.propTypes = {
-    userName: PropTypes.string,
-};
+    history: PropTypes.object.isRequired,
+}
 
 export default Header;

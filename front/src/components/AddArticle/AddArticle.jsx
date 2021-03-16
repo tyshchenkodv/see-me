@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import * as yup from 'yup';
 import { Formik } from 'formik';
+import {
+    Dialog,
+    DialogContent,
+} from '@material-ui/core'
 import AddEditArticleForm from '../AddEditArticleForm';
 
-function AddArticle ({createArticle, history}) {
-    const handleSubmit = async formData => {
-        await createArticle(formData);
-        history.push('/articles');
-    }
+function AddArticle ({createArticle, history, setOpen, open}) {
 
     const articleValidation = yup.object().shape({
         title: yup
@@ -21,22 +21,41 @@ function AddArticle ({createArticle, history}) {
             .max(5000, 'Too loong').required('Required'),
     });
 
+    const handleCloseCancel = () => {
+        setOpen(false);
+    };
+
+    const handleCloseAdd = async formData => {
+        await createArticle(formData);
+        setOpen(false);
+        history.go(0);
+        history.push('/articles');
+    }
+
     return (
-        <>
-            <Formik
-                initialValues={{title: '', text: ''}}
-                onSubmit={handleSubmit}
-                validationSchema={articleValidation}
-            >
-                {({
-                      errors,
-                      touched,
-                  }) => (
-                    <AddEditArticleForm errors={errors}
-                                        touched={touched}/>
-                )}
-            </Formik>
-        </>
+        <div>
+            <Dialog open={open}
+                    onClose={handleCloseCancel}
+                    aria-labelledby="form-dialog-title"
+                    fullWidth>
+                <DialogContent>
+                    <Formik
+                        initialValues={{title: '', text: ''}}
+                        onSubmit={handleCloseAdd}
+                        validationSchema={articleValidation}
+                    >
+                        {({
+                              errors,
+                              touched,
+                          }) => (
+                            <AddEditArticleForm errors={errors}
+                                                touched={touched}
+                                                handleCloseCancel={handleCloseCancel}/>
+                        )}
+                    </Formik>
+                </DialogContent>
+            </Dialog>
+        </div>
     );
 }
 
