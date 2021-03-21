@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Field, Form } from 'formik';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
+import { Select, MenuItem, DialogActions, Button } from '@material-ui/core';
 
-function AddEditArticleForm ({errors, touched}) {
+function AddEditArticleForm ({errors, touched, handleCloseCancel}) {
     return (
         <Form>
             <div className="form-group">
@@ -17,7 +16,7 @@ function AddEditArticleForm ({errors, touched}) {
             </div>
             <div className="form-group">
                 <label>Article text</label>
-                <Field type="text" className="form-control" id="text" name="text"/>
+                <Field type="text" className="form-control" id="text" name="text" as="textarea" rows="5"/>
                 {touched.text && errors.text ? (
                     <div className="alert alert-danger">{errors.text}</div>
                 ) : null}
@@ -36,7 +35,14 @@ function AddEditArticleForm ({errors, touched}) {
                     </div>
                 )}
             </Field>
-            <button type="submit" className="btn btn-primary">Create article</button>
+            <DialogActions>
+                <Button onClick={handleCloseCancel} color="primary">
+                    Cancel
+                </Button>
+                <Button type="submit" color="primary">
+                    GO!
+                </Button>
+            </DialogActions>
         </Form>
     );
 }
