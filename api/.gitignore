@@ -8,6 +8,3 @@
 # config
 .env
 !.env.example
-
-# storage
-/storage
