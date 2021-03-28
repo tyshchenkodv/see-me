@@ -1,14 +1,16 @@
 import React, {useState, useEffect, useCallback} from 'react';
+import PropTypes from 'prop-types';
 import ArticlesListItem from '../../components/ArticlesListItem';
 import { getAllArticles } from './apiCalls';
 import {useMutation, useQuery} from "react-query";
 import LinearProgress from '@material-ui/core/LinearProgress';
 import {updateArticleRequest} from "../AddArticlePage/apiCalls";
+import EditArticle from "../../components/EditArticle/EditArticle";
 
-export default function ArticlesPage({history}) {
+function ArticlesPage({history}) {
     const [articles, setArticles] = useState([]);
     const [visible, setVisible] = useState(5);
-    const [open, setOpen] = useState(false);
+    const [selectedArticle, setSelectedArticle] = useState(false);
     const {mutate: updateArticle} = useMutation(updateArticleRequest);
 
     const onUpdateArticle = useCallback(async ({formData, id}) => {
@@ -18,7 +20,7 @@ export default function ArticlesPage({history}) {
         } catch (e) {
             console.log(e);
         }
-    }, []);
+    }, [updateArticle]);
 
     const loadMore = useCallback(() => {
         setVisible(visible + 5);
@@ -34,7 +36,7 @@ export default function ArticlesPage({history}) {
             const {posts} = response?.data || [];
             setArticles(posts);
         }
-    }, [isFetching]);
+    }, [setArticles, response]);
 
     return (
         <>
@@ -45,9 +47,12 @@ export default function ArticlesPage({history}) {
                                                  key={index}
                                                  updateArticle={onUpdateArticle}
                                                  history={history}
-                                                 setOpen={setOpen}
-                                                 open={open}/>
+                                                 setSelectedArticle={setSelectedArticle}/>
                     })}
+                    <EditArticle updateArticle={updateArticle}
+                                 history={history}
+                                 setSelectedArticle={setSelectedArticle}
+                                 selectedArticle={selectedArticle}/>
                     <button onClick={loadMore}
                             type="button"
                             className="btn btn-default"
@@ -57,3 +62,9 @@ export default function ArticlesPage({history}) {
                 : <LinearProgress/>}
         </>);
 }
+
+ArticlesPage.propTypes = {
+    history: PropTypes.object.isRequired,
+}
+
+export default ArticlesPage;

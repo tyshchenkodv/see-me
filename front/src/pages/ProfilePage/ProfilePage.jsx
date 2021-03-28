@@ -1,15 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Profile from '../../components/Profile';
 
-function ProfilePage({setUserName}) {
+function ProfilePage({ match: { params } }) {
+    const [pageType, setPageType] = useState('edit');
+
+    useEffect(()=>{
+        if(params?.id === 'edit') {
+            setPageType('edit');
+        } else {
+            setPageType(params.id);
+        }
+    });
+
     return (
-        <Profile setUserName={setUserName} />
+        <>
+            <p>{pageType}</p>
+        </>
     )
 }
 
 ProfilePage.propTypes = {
-    setUserName: PropTypes.func.isRequired,
+    match: PropTypes.object.isRequired,
 };
 
 export default ProfilePage;

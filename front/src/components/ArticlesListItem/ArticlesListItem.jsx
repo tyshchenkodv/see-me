@@ -2,14 +2,14 @@ import React from 'react';
 import Paper from '@material-ui/core/Paper';
 import { useStyles } from "./styles";
 import { NavLink } from "react-router-dom";
+import PropTypes from 'prop-types';
 import { typeOfArticlesListItem } from './propTypes';
 import IconButton from '@material-ui/core/IconButton';
 import EditIcon from '@material-ui/icons/Edit';
-import EditArticle from "../EditArticle/EditArticle";
 
-function ArticlesListItem ({ article, updateArticle, history, setOpen, open }) {
+function ArticlesListItem ({ article, setSelectedArticle }) {
     const classes = useStyles();
-    const handleOpen = () => setOpen(true);
+    const handleOpen = () => setSelectedArticle(article);
 
     return (
         <>
@@ -37,16 +37,12 @@ function ArticlesListItem ({ article, updateArticle, history, setOpen, open }) {
                     </div>
                 </div>
             </Paper>
-            <EditArticle article={article}
-                         updateArticle={updateArticle}
-                         history={history}
-                         setOpen={setOpen}
-                         open={open}/>
         </>);
 }
 
 ArticlesListItem.propTypes = {
     article: typeOfArticlesListItem,
+    setSelectedArticle: PropTypes.func.isRequired,
 };
 
 export default ArticlesListItem;
