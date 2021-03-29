@@ -27,7 +27,7 @@ function AddEditArticleForm ({errors, touched, handleCloseCancel, setFieldValue}
     const cropImage = () => {
         if (typeof cropper !== 'undefined') {
             setCroppedImage(cropper.getCroppedCanvas().toDataURL());
-            setFieldValue("image", image);
+            croppedImage && setFieldValue("image", croppedImage);
         }
     };
 
@@ -77,7 +77,7 @@ function AddEditArticleForm ({errors, touched, handleCloseCancel, setFieldValue}
                         </Button>}
                         {image && !croppedImage && <Cropper src={image} onInitialized={instance => setCropper(instance)} />}
                         {image && !croppedImage && <Button variant="contained" onClick={cropImage}>Crop!</Button>}
-                        {croppedImage && <img src={croppedImage} />}
+                        {croppedImage && <img src={croppedImage} alt="Cropped" />}
                     </div>
                 </Grid>
             </Grid>
