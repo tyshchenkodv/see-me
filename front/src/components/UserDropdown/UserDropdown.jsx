@@ -3,6 +3,8 @@ import { IconButton, Menu, MenuItem } from "@material-ui/core";
 import { AccountCircle } from '@material-ui/icons';
 import PropTypes from "prop-types";
 
+const USER_ID = 1;
+
 function UserDropdown ({ history }) {
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -17,12 +19,12 @@ function UserDropdown ({ history }) {
 
     const handleProfile = () => {
         setAnchorEl(null);
-        history.push('/profile');
+        history.push(`/profiles/${USER_ID}`);
     };
 
     const handleEditProfile = () => {
         setAnchorEl(null);
-        history.push('/profile/edit');
+        history.push('/profiles/edit');
     };
 
     const handleLogout = () => {

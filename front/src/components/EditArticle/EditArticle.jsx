@@ -5,15 +5,15 @@ import { Formik } from 'formik';
 import AddEditArticleForm from '../AddEditArticleForm';
 import {Dialog, DialogContent} from "@material-ui/core";
 
-function EditArticle ({updateArticle, article, history, setOpen, open}) {
+function EditArticle ({updateArticle, history, setSelectedArticle, selectedArticle}) {
 
     const handleCloseCancel = () => {
-        setOpen(false);
+        setSelectedArticle(false);
     };
 
     const handleCloseAdd = async formData => {
-        await updateArticle({formData, id: article.id});
-        setOpen(false);
+        await updateArticle({formData, id: selectedArticle.id});
+        setSelectedArticle(false);
         history.go(0);
         history.push('/articles');
     }
@@ -31,24 +31,28 @@ function EditArticle ({updateArticle, article, history, setOpen, open}) {
 
     return (
         <div>
-            <Dialog open={open}
+            <Dialog open={!!selectedArticle}
                     onClose={handleCloseCancel}
                     aria-labelledby="form-dialog-title"
                     fullWidth>
                 <DialogContent>
                     <Formik
-                        initialValues={{title: article?.title || '',
-                            text: article?.text || '',
-                            available: article?.available || ''}}
+                        initialValues={{title: selectedArticle?.title || '',
+                            text: selectedArticle?.text || '',
+                            available: selectedArticle?.available || '',
+                            image: null,
+                        }}
                         onSubmit={handleCloseAdd}
                         validationSchema={articleValidation}
                     >
                         {({
                               errors,
                               touched,
+                              setFieldValue,
                           }) => (
                             <AddEditArticleForm errors={errors}
                                                 touched={touched}
+                                                setFieldValue={setFieldValue}
                                                 handleCloseCancel={handleCloseCancel}/>
                         )}
                     </Formik>
@@ -60,8 +64,9 @@ function EditArticle ({updateArticle, article, history, setOpen, open}) {
 
 EditArticle.propTypes = {
     updateArticle: PropTypes.func.isRequired,
-    article: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
+    setSelectedArticle: PropTypes.func.isRequired,
+    selectedArticle: PropTypes.object.isRequired,
 }
 
 export default EditArticle;

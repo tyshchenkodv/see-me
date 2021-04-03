@@ -39,9 +39,7 @@ function App ({ location: { pathname }, history }) {
                             <Route exact path="/signin" component={SignInPage}/>
                             <Route exact path="/signup" component={SignUpPage}/>
                             <Route exact path="/articles" component={ArticlesPage}/>
-                            <Route exact path="/profiles">
-                                <ProfilePage setUserName={setUserName}/>
-                            </Route>
+                            <Route exact path="/profiles/:id" component={ProfilePage}/>
                         </Switch>
                     </Grid>
                 </Grid>
