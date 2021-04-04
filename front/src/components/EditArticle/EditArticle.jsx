@@ -6,7 +6,6 @@ import AddEditArticleForm from '../AddEditArticleForm';
 import {Dialog, DialogContent} from "@material-ui/core";
 
 function EditArticle ({updateArticle, history, setSelectedArticle, selectedArticle}) {
-
     const handleCloseCancel = () => {
         setSelectedArticle(false);
     };
@@ -40,7 +39,7 @@ function EditArticle ({updateArticle, history, setSelectedArticle, selectedArtic
                         initialValues={{title: selectedArticle?.title || '',
                             text: selectedArticle?.text || '',
                             available: selectedArticle?.available || '',
-                            image: null,
+                            image: undefined,
                         }}
                         onSubmit={handleCloseAdd}
                         validationSchema={articleValidation}
