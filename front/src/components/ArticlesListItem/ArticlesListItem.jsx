@@ -30,7 +30,7 @@ function ArticlesListItem ({ article, setSelectedArticle }) {
                                 </div>
                                 <p className="post-meta">Posted by
                                     <NavLink exact
-                                             to={'/users/' + article.userId}> {article.firstName} {article.secondName}</NavLink>
+                                             to={'/profiles/' + article.userId}> {article.firstName} {article.secondName}</NavLink>
                                 </p>
                             </div>
                         </div>

@@ -7,7 +7,7 @@ import { useMutation, useQuery } from "react-query";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
 function AddArticlePage({ match: { params }, history }) {
-    const token = window.localStorage.getItem('token');
+    const token = localStorage.getItem('token');
     const {id} = params;
     const [pageType, setPageType] = useState('new');
     const {mutate: createArticle} = useMutation(createArticleRequest);

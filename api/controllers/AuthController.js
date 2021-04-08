@@ -56,6 +56,7 @@ module.exports = {
                 );
 
                 return res.status(200).send({
+                    user: user,
                     token,
                 });
             }
@@ -107,7 +108,7 @@ module.exports = {
         return res.redirect(`${env.get('FRONT_HOST')}/login`);
     },
     async facebook(req, res, next) {
-        const { facebookId, name, email } = req.body;
+        const { id: facebookId, name, email } = req.body;
 
         let user = await db('users').where({
             email,
@@ -162,6 +163,7 @@ module.exports = {
             );
 
             return res.status(200).send({
+                user: user,
                 token,
             });
         }catch (error){
@@ -169,7 +171,7 @@ module.exports = {
         }
     },
     async google(req, res, next) {
-        const { googleId, name, email } = req.body;
+        const { googleId, name, email, imageUrl } = req.body;
 
         let user = await db('users').where({
             email,
@@ -197,6 +199,7 @@ module.exports = {
                         firstName: nameMass[0],
                         secondName: nameMass[1],
                         email: email,
+                        avatar: imageUrl,
                         verified: true,
                     });
 
@@ -224,6 +227,7 @@ module.exports = {
             );
 
             return res.status(200).send({
+                user: user,
                 token,
             });
         }catch (error){

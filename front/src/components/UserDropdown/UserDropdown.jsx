@@ -1,11 +1,8 @@
 import React, {useState} from 'react';
-import { IconButton, Menu, MenuItem } from "@material-ui/core";
-import { AccountCircle } from '@material-ui/icons';
+import { Button, Menu, MenuItem, Avatar } from "@material-ui/core";
 import PropTypes from "prop-types";
 
-const USER_ID = 1;
-
-function UserDropdown ({ history }) {
+function UserDropdown ({ history, logout, user }) {
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
 
@@ -19,31 +16,28 @@ function UserDropdown ({ history }) {
 
     const handleProfile = () => {
         setAnchorEl(null);
-        history.push(`/profiles/${USER_ID}`);
+        history.push(`/profiles/edit`);
     };
 
-    const handleEditProfile = () => {
+    const handleLogout = async () => {
         setAnchorEl(null);
-        history.push('/profiles/edit');
-    };
-
-    const handleLogout = () => {
-        setAnchorEl(null);
-        window.localStorage.removeItem('token');
+        await logout();
         history.push('/signin');
     };
 
     return (
         <div>
-            <IconButton
+            {user && <Button
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
                 onClick={handleMenu}
                 color="inherit"
+                startIcon={<Avatar src={`http://localhost:3333/users/avatar/${user?.avatar}`} />}
             >
-                <AccountCircle />
-            </IconButton>
+                {user?.firstName + ' ' + user?.secondName}
+            </Button>
+            }
             <Menu
                 id="menu-appbar"
                 anchorEl={anchorEl}
@@ -60,7 +54,6 @@ function UserDropdown ({ history }) {
                 onClose={handleClose}
             >
                 <MenuItem onClick={handleProfile}>Profile</MenuItem>
-                <MenuItem onClick={handleEditProfile}>Edit profile</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
         </div>
@@ -69,6 +62,8 @@ function UserDropdown ({ history }) {
 
 UserDropdown.propTypes = {
     history: PropTypes.object.isRequired,
+    logout: PropTypes.func.isRequired,
+    user: PropTypes.object.isRequired,
 }
 
 export default UserDropdown;

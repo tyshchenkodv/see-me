@@ -14,7 +14,7 @@ function ArticlesPage({history}) {
     const {mutate: updateArticle} = useMutation(updateArticleRequest);
 
     const onUpdateArticle = useCallback(async ({formData, id}) => {
-        const token = window.localStorage.getItem('token');
+        const token = localStorage.getItem('token');
         try {
             await updateArticle({token, formData, id});
         } catch (e) {
@@ -26,8 +26,8 @@ function ArticlesPage({history}) {
         setVisible(visible + 5);
     }, [visible]);
 
-    const {data: response, isFetching} = useQuery('articles', () => {
-        const token = window.localStorage.getItem('token');
+    const {data: response, isFetching} = useQuery('articles', async () => {
+        const token = window.localStorage.getItem('refreshToken');
         return getAllArticles(token);
     });
 

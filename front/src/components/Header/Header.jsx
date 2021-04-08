@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useCallback} from 'react';
 import { NavLink } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Button } from '@material-ui/core';
 import { useStyles } from './styles';
@@ -8,12 +8,12 @@ import {useMutation} from "react-query";
 import {createArticleRequest} from "../../pages/AddArticlePage/apiCalls";
 import AddArticle from "../AddArticle";
 
-function Header ({ history }) {
+function Header ({ history, user, logout }) {
     const classes = useStyles();
-    const [isLogged, setIsLogged] = useState(false);
     const [open, setOpen] = useState(false);
     const {mutate: createArticle} = useMutation(createArticleRequest);
-    const token = window.localStorage.getItem('token');
+    const tokenString = localStorage.getItem('token') || null;
+    const token = JSON.parse(tokenString);
 
     const onCreateArticle = useCallback(async formData => {
         try {
@@ -21,15 +21,7 @@ function Header ({ history }) {
         } catch (e) {
             console.log(e);
         }
-    }, []);
-
-    useEffect(() => {
-        if (token) {
-            return setIsLogged(true);
-        } else if (!token) {
-            return setIsLogged(false);
-        }
-    });
+    }, [createArticle, token]);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -53,7 +45,7 @@ function Header ({ history }) {
                     createArticle={onCreateArticle}
                     setOpen={setOpen}
                     open={open}/>
-        <UserDropdown history={history}/>
+        <UserDropdown history={history} user={user} logout={logout}/>
     </>
 
     const nonAuthButtons = <>
@@ -79,7 +71,7 @@ function Header ({ history }) {
                 <Typography variant="h6" className={classes.title}>
                     SeeME
                 </Typography>
-                {isLogged ? authButtons : nonAuthButtons}
+                {token ? authButtons : nonAuthButtons}
             </Toolbar>
         </AppBar>
     );
@@ -87,6 +79,8 @@ function Header ({ history }) {
 
 Header.propTypes = {
     history: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired,
+    logout:PropTypes.func.isRequired,
 }
 
 export default Header;

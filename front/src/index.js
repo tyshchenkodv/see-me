@@ -7,6 +7,7 @@ import {
     QueryClient,
     QueryClientProvider,
 } from 'react-query';
+import AuthStore from './authStore';
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -19,11 +20,13 @@ const queryClient = new QueryClient({
 
 ReactDOM.render(
   <React.StrictMode>
-      <BrowserRouter>
-          <QueryClientProvider client={queryClient}>
-              <App />
-          </QueryClientProvider>
-      </BrowserRouter>
+      <AuthStore>
+          <BrowserRouter>
+              <QueryClientProvider client={queryClient}>
+                  <App />
+              </QueryClientProvider>
+          </BrowserRouter>
+      </AuthStore>
   </React.StrictMode>,
   document.getElementById('root')
 );

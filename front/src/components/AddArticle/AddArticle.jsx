@@ -29,7 +29,7 @@ function AddArticle ({createArticle, history, setOpen, open}) {
         await createArticle(formData);
         setOpen(false);
         history.go(0);
-        history.push('/articles');
+        history.push('/');
     }
 
     return (

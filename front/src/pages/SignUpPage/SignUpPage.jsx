@@ -1,19 +1,42 @@
-import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import Grid from '@material-ui/core/Grid';
+import React, { useState, forwardRef } from 'react';
+import {
+    Avatar,
+    Button,
+    CssBaseline,
+    TextField,
+    Grid,
+    Typography,
+    Container,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
+    Slide,
+} from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
 import { useStyles } from './styles';
-import Container from '@material-ui/core/Container';
-import { signUp } from './apiCalls';
 import PropTypes from "prop-types";
 import { NavLink } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
+
+const Transition = forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 function SignUpPage({ history }) {
+    const [open, setOpen] = useState(false);
     const classes = useStyles();
+    const { signup } = useAuth();
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+        history.push('/signin');
+    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -25,9 +48,8 @@ function SignUpPage({ history }) {
             password: event.target.password.value,
         };
 
-        await signUp(reqData);
-
-        history.push('/signin');
+        await signup(reqData);
+        handleClickOpen();
     }
 
     return (
@@ -106,6 +128,26 @@ function SignUpPage({ history }) {
                         </Grid>
                     </Grid>
                 </form>
+                <Dialog
+                    open={open}
+                    TransitionComponent={Transition}
+                    keepMounted
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-slide-title"
+                    aria-describedby="alert-dialog-slide-description"
+                >
+                    <DialogTitle id="alert-dialog-slide-title">Almost</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-slide-description">
+                            Please confirm your email address to enter the social network!
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose} color="primary">
+                            Agree
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </div>
         </Container>
     );
