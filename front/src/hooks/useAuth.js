@@ -31,6 +31,10 @@ export default function useAuth() {
                             'token',
                             JSON.stringify(res.data.token),
                         );
+                        localStorage.setItem(
+                            'tokenExpires',
+                            JSON.stringify(res.data.tokenExpires),
+                        );
                     });
             }catch (e) {
                 console.log('Login error with error: ' + e);
@@ -58,6 +62,10 @@ export default function useAuth() {
                         localStorage.setItem(
                             'token',
                             JSON.stringify(res.data.token),
+                        );
+                        localStorage.setItem(
+                            'tokenExpires',
+                            JSON.stringify(res.data.tokenExpires),
                         );
                     });
             }catch (e) {
@@ -87,6 +95,10 @@ export default function useAuth() {
                             'token',
                             JSON.stringify(res.data.token),
                         );
+                        localStorage.setItem(
+                            'tokenExpires',
+                            JSON.stringify(res.data.tokenExpires),
+                        );
                     });
             }catch (e) {
                 console.log('Login error with error: ' + e);
@@ -104,6 +116,7 @@ export default function useAuth() {
                 type: 'CLEAR_AUTH',
             });
             localStorage.removeItem('token');
+            localStorage.removeItem('tokenExpires');
         }
 
         return false;

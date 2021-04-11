@@ -12,19 +12,28 @@ import SignUpPage from "./pages/SignUpPage";
 import ErrorBoundary from './errorBoundary/ErrorBoundary';
 import useAuth from "./hooks/useAuth";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import { isExpired } from "./utils/isExpired";
 
 function App ({ location: { pathname }, history }) {
     const { user, logout, loading, getUserByToken } = useAuth();
 
     const checkAuth = async () => {
-        const tokenString = localStorage.getItem('token') || null;
-        const token = JSON.parse(tokenString);
-        if (token) {
-            await getUserByToken(token);
-            if (pathname === '/signin' || pathname === '/signup') {
-                history.push('/');
-            }
-        } else if (!token && (pathname !== '/signin' && pathname !== '/signup')) {
+        const tokenExpires = localStorage.getItem('tokenExpires') || null;
+        if (isExpired(tokenExpires)) {
+            const tokenString = localStorage.getItem('token') || null;
+            const token = JSON.parse(tokenString);
+
+            if (token) {
+                await getUserByToken(token);
+                if (pathname === '/signin' || pathname === '/signup') {
+                    history.push('/');
+                }
+            } else if (!token && (pathname !== '/signin' && pathname !== '/signup')) {
+                history.push('/signin');
+            }}
+        else {
+            localStorage.removeItem('tokenExpires');
+            localStorage.removeItem('token');
             history.push('/signin');
         }
     };

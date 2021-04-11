@@ -55,9 +55,12 @@ module.exports = {
                     },
                 );
 
+                const date = new Date();
+
                 return res.status(200).send({
                     user: user,
                     token,
+                    tokenExpires: date.setDate(date.getDate() + 6),
                 });
             }
 
@@ -162,9 +165,12 @@ module.exports = {
                 },
             );
 
+            const date = new Date();
+
             return res.status(200).send({
                 user: user,
                 token,
+                tokenExpires: date.setDate(date.getDate() + 6),
             });
         }catch (error){
             return next(new InternalErrorException(error));
@@ -226,9 +232,12 @@ module.exports = {
                 },
             );
 
+            const date = new Date();
+
             return res.status(200).send({
                 user: user,
                 token,
+                tokenExpires: date.setDate(date.getDate() + 6),
             });
         }catch (error){
             return next(new InternalErrorException(error));

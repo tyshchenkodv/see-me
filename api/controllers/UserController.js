@@ -17,9 +17,13 @@ module.exports = {
                 return next(new NotFoundException());
             }
             delete user.password;
+
+            const date = new Date();
+
             return res.status(200).send({
                 user: user,
-                token: token,
+                token,
+                tokenExpires: date.setDate(date.getDate() + 6),
             });
         }
     },
