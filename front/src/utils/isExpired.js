@@ -3,5 +3,5 @@ export const isExpired = (exp) => {
         return false;
     }
 
-    return Date.now() > exp;
+    return Date.now() < exp;
 };

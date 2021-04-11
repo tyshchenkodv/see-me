@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, createContext, useReducer} from 'react';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Container, Grid } from "@material-ui/core";
@@ -15,7 +15,7 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import { isExpired } from "./utils/isExpired";
 
 function App ({ location: { pathname }, history }) {
-    const { user, logout, loading, getUserByToken } = useAuth();
+    const {user, logout, loading, getUserByToken} = useAuth();
 
     const checkAuth = async () => {
         const tokenExpires = localStorage.getItem('tokenExpires') || null;
@@ -30,8 +30,8 @@ function App ({ location: { pathname }, history }) {
                 }
             } else if (!token && (pathname !== '/signin' && pathname !== '/signup')) {
                 history.push('/signin');
-            }}
-        else {
+            }
+        } else {
             localStorage.removeItem('tokenExpires');
             localStorage.removeItem('token');
             history.push('/signin');

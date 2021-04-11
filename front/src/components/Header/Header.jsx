@@ -7,9 +7,11 @@ import PropTypes from "prop-types";
 import {useMutation} from "react-query";
 import {createArticleRequest} from "../../pages/AddArticlePage/apiCalls";
 import AddArticle from "../AddArticle";
+import useArticles from "../../hooks/useArticles";
 
 function Header ({ history, user, logout }) {
     const classes = useStyles();
+    const { refetchArticles } = useArticles();
     const [open, setOpen] = useState(false);
     const {mutate: createArticle} = useMutation(createArticleRequest);
     const tokenString = localStorage.getItem('token') || null;
@@ -18,10 +20,11 @@ function Header ({ history, user, logout }) {
     const onCreateArticle = useCallback(async formData => {
         try {
             await createArticle({token, formData});
+            refetchArticles();
         } catch (e) {
             console.log(e);
         }
-    }, [createArticle, token]);
+    }, [createArticle, token, refetchArticles]);
 
     const handleClickOpen = () => {
         setOpen(true);

@@ -11,6 +11,18 @@ async function getAllArticles(token) {
     );
 }
 
+async function deleteArticleRequest({token, id}) {
+    return apiClient.delete(`/articles/${id}`,
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token,
+            }
+        },
+    );
+}
+
 export {
     getAllArticles,
+    deleteArticleRequest,
 };
