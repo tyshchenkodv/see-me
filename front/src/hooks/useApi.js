@@ -1,15 +1,14 @@
 import { useCallback } from 'react';
 import { apiClient } from '../config/axios';
 import useAuth from './useAuth';
+import { isNotExpired } from '../utils/isNotExpired';
 
 export default function useApi() {
     const { token, tokenExpires, refreshToken } = useAuth();
 
     const callApi = useCallback(async (url, method = 'get', data = {}) => {
         if (token) {
-            const now = new Date();
-            const expires = new Date(tokenExpires);
-            if (now.getTime() > expires.getTime()) {
+            if (!isNotExpired(tokenExpires)) {
                 await refreshToken();
             }
         }
