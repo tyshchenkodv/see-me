@@ -8,7 +8,36 @@ const InternalErrorException = DIContainer.resolve('internalErrorException');
 const BadRequestException = DIContainer.resolve('badRequestException');
 
 module.exports = {
-    async login (req, res, next) {
+    token: async (req, res, next) => {
+        const payload = jwt.verify(req.header('token'), env.get('SECRET'));
+
+        if(payload){
+            const user = await db('users').where({id: payload.id}).first();
+
+            if(user){
+                const token = jwt.sign(
+                    {
+                        id: user.id,
+                        email: user.email,
+                        firstName: user.firstName,
+                    },
+                    env.get('SECRET'),
+                    {
+                        expiresIn: env.get('EXPIRES_IN'),
+                    },
+                );
+
+                const date = new Date();
+
+                return res.status(200).send({
+                    token,
+                    tokenExpires: date.setDate(date.getDate() + 6),
+                });
+            }
+        }
+        return next(new BadRequestException());
+    },
+    login: async (req, res, next) => {
         const { email, password } = req.body;
 
         try {

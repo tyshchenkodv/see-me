@@ -5,13 +5,14 @@ import { useStyles } from './styles';
 import UserDropdown from "../UserDropdown/UserDropdown";
 import PropTypes from "prop-types";
 import {useMutation} from "react-query";
-import {createArticleRequest} from "../../pages/AddArticlePage/apiCalls";
+import ApiCallsAddArticlePage from "../../pages/AddArticlePage/apiCalls";
 import AddArticle from "../AddArticle";
 import useArticles from "../../hooks/useArticles";
 
 function Header ({ history, user, logout }) {
     const classes = useStyles();
     const { refetchArticles } = useArticles();
+    const {createArticleRequest} = ApiCallsAddArticlePage();
     const [open, setOpen] = useState(false);
     const {mutate: createArticle} = useMutation(createArticleRequest);
     const tokenString = localStorage.getItem('token') || null;

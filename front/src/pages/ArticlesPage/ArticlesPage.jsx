@@ -1,23 +1,24 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import PropTypes from 'prop-types';
 import ArticlesListItem from '../../components/ArticlesListItem';
-import { getAllArticles, deleteArticleRequest } from './apiCalls';
+import ApiCallsArticlesPage from './apiCalls';
 import {useMutation, useQuery} from "react-query";
 import LinearProgress from '@material-ui/core/LinearProgress';
-import {updateArticleRequest} from "../AddArticlePage/apiCalls";
+import ApiCallsAddArticlePage from '../AddArticlePage/apiCalls';
 import EditArticle from "../../components/EditArticle/EditArticle";
 import useArticles from '../../hooks/useArticles';
 import useAuth from "../../hooks/useAuth";
 
 function ArticlesPage({history}) {
     const {setRefetch} = useArticles();
-    const {user} = useAuth();
+    const {user, loading} = useAuth();
+    const {getAllArticles, deleteArticleRequest} = ApiCallsArticlesPage();
+    const {updateArticleRequest} = ApiCallsAddArticlePage();
     const [articles, setArticles] = useState([]);
     const [visible, setVisible] = useState(5);
     const [selectedArticle, setSelectedArticle] = useState(false);
     const {data: response, isFetching, refetch: refetchArticles} = useQuery('articles', async () => {
-        const token = window.localStorage.getItem('refreshToken');
-        return getAllArticles(token);
+        return getAllArticles();
     }, {manual: true,});
     const {mutate: updateArticle} = useMutation(updateArticleRequest, {
         onSuccess: () => {
@@ -31,18 +32,16 @@ function ArticlesPage({history}) {
     });
 
     const onUpdateArticle = useCallback(async ({formData, id}) => {
-        const token = localStorage.getItem('token');
         try {
-            await updateArticle({token, formData, id});
+            await updateArticle({formData, id});
         } catch (e) {
             console.log(e);
         }
     }, [updateArticle]);
 
     const onDeleteArticle = useCallback(async (id) => {
-        const token = localStorage.getItem('token').slice(1, -1);
         try {
-            await deleteArticle({token, id});
+            await deleteArticle(id);
         } catch (e) {
             console.log(e);
         }
@@ -62,12 +61,12 @@ function ArticlesPage({history}) {
 
     return (
         <>
-            {!isFetching ?
+            {!isFetching && !loading ?
                 <div>
                     {articles.slice(0, visible).map((article, index) => {
                         return <ArticlesListItem article={article}
                                                  key={index}
-                                                 btnVisible={user.id !== article.userId}
+                                                 btnVisible={user?.id !== article?.userId}
                                                  updateArticle={onUpdateArticle}
                                                  history={history}
                                                  setSelectedArticle={setSelectedArticle}

@@ -1,15 +1,15 @@
-import { apiClient } from '../../config/axios';
+import useApi from "../../hooks/useApi";
 
-async function getUserById(id) {
-    return apiClient.get(`/users/${id}`,
-        {
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        },
-    );
+export default function ApiCallsProfilePage() {
+    const { callApi } = useApi();
+
+    const getUserById = async (id) => {
+        return callApi(`/users/${id}`,
+            'get',
+        );
+    }
+
+    return {
+        getUserById,
+    };
 }
-
-export {
-    getUserById,
-};

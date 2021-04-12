@@ -1,13 +1,46 @@
 import { useCallback, useContext } from 'react';
-import axios from 'axios';
 import { apiClient } from '../config/axios';
 import { Context } from '../authStore';
+import {isNotExpired} from "../utils/isNotExpired";
 
 export default function useAuth() {
     const [state, dispatch] = useContext(Context);
 
+    const refreshToken = useCallback(async () => {
+        dispatch({
+            type: 'SET_AUTH_REQUEST',
+        });
+        try {
+            await apiClient
+                .get(`/auth/token`,{
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'token': state.token,
+                    }})
+                .then((res) => {
+                    dispatch({
+                        type: 'SET_AUTH',
+                        payload: {
+                            token: res.data.token,
+                            tokenExpires: res.data.tokenExpires,
+                        }
+                    });
+                    localStorage.setItem(
+                        'token',
+                        JSON.stringify(res.data.token),
+                    );
+                    localStorage.setItem(
+                        'tokenExpires',
+                        JSON.stringify(res.data.tokenExpires),
+                    );
+                });
+        }catch (e) {
+            console.log('Login error with error: ' + e);
+        }
+    }, [state, dispatch]);
+
     const signup = useCallback(
-        (formData) => axios.post('http://localhost:3333/auth/signup', formData),
+        (formData) => apiClient.post('/auth/signup', formData),
         []
     );
 
@@ -17,25 +50,27 @@ export default function useAuth() {
                 type: 'SET_AUTH_REQUEST',
             });
             try {
-                await axios
-                    .post('http://localhost:3333/auth/login', { email, password })
-                    .then(res => {
-                        dispatch({
-                            type: 'SET_AUTH',
-                            payload: {
-                                user: res.data.user,
-                                token: res.data.token,
-                            },
-                        });
-                        localStorage.setItem(
-                            'token',
-                            JSON.stringify(res.data.token),
-                        );
-                        localStorage.setItem(
-                            'tokenExpires',
-                            JSON.stringify(res.data.tokenExpires),
-                        );
+                await apiClient.post(
+                    '/auth/login',
+                    { email, password }
+                ).then(res => {
+                    dispatch({
+                        type: 'SET_AUTH',
+                        payload: {
+                            user: res.data.user,
+                            token: res.data.token,
+                            tokenExpires: res.data.tokenExpires,
+                        },
                     });
+                    localStorage.setItem(
+                        'token',
+                        JSON.stringify(res.data.token),
+                    );
+                    localStorage.setItem(
+                        'tokenExpires',
+                        JSON.stringify(res.data.tokenExpires),
+                    );
+                });
             }catch (e) {
                 console.log('Login error with error: ' + e);
             }
@@ -49,14 +84,15 @@ export default function useAuth() {
                 type: 'SET_AUTH_REQUEST',
             });
             try {
-                await axios
-                    .post('http://localhost:3333/auth/login/facebook', data)
+                await apiClient
+                    .post('/auth/login/facebook', data)
                     .then(res => {
                         dispatch({
                             type: 'SET_AUTH',
                             payload: {
                                 user: res.data.user,
                                 token: res.data.token,
+                                tokenExpires: res.data.tokenExpires,
                             },
                         });
                         localStorage.setItem(
@@ -81,14 +117,15 @@ export default function useAuth() {
                 type: 'SET_AUTH_REQUEST',
             });
             try {
-                await axios
-                    .post('http://localhost:3333/auth/login/google', data)
+                await apiClient
+                    .post('/auth/login/google', data)
                     .then(res => {
                         dispatch({
                             type: 'SET_AUTH',
                             payload: {
                                 user: res.data.user,
                                 token: res.data.token,
+                                tokenExpires: res.data.tokenExpires,
                             },
                         });
                         localStorage.setItem(
@@ -127,81 +164,88 @@ export default function useAuth() {
             type: 'SET_AUTH_REQUEST',
         });
         try {
-            await apiClient
-                .put(`/users/${id}/edit`, {user: user}, {
-                    headers: {
-                        'Access-Control-Allow-Origin': '*',
-                        'Content-Type': 'application/json',
-                        'token': state.token,
-                    }})
-                .then((res) => {
-                    dispatch({
-                        type: 'SET_AUTH',
-                        payload: {
-                            user: res.data,
-                        }
+            if (isNotExpired(state.tokenExpires)) {
+                await apiClient
+                    .put(`/users/${id}/edit`, {user: user}, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'token': state.token,
+                        }})
+                    .then((res) => {
+                        dispatch({
+                            type: 'SET_AUTH',
+                            payload: {
+                                user: res.data,
+                            }
+                        });
                     });
-                });
+            } else await refreshToken();
         }catch (e) {
             console.log('Login error with error: ' + e);
         }
-    }, [state, dispatch]);
+    }, [state.token, state.tokenExpires, dispatch, refreshToken]);
 
-    const getUserByToken = useCallback(async (token) => {
+    const getUserByToken = useCallback(async () => {
         dispatch({
             type: 'SET_AUTH_REQUEST',
         });
         try {
-            await apiClient
-                .get('/users/token', {
-                    headers: {
-                        'Access-Control-Allow-Origin': '*',
-                        'Content-Type': 'application/json',
-                        'token': token,
-                    }})
-                .then((res) => {
-                    dispatch({
-                        type: 'SET_AUTH',
-                        payload: {
-                            user: res.data.user,
-                            token: res.data.token,
+            if (isNotExpired(state.tokenExpires)) {
+                await apiClient
+                    .get('/users/token', {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            token: state.token,
                         }
+                    })
+                    .then((res) => {
+                        dispatch({
+                            type: 'SET_AUTH',
+                            payload: {
+                                user: res.data.user,
+                                token: res.data.token,
+                                tokenExpires: res.data.tokenExpires,
+                            }
+                        });
                     });
-                });
-        }catch (e) {
+            } else await refreshToken();
+        } catch (e) {
             console.log('Login error with error: ' + e);
         }
-    }, [dispatch]);
+    }, [state.token, state.tokenExpires, dispatch, refreshToken]);
 
     const updateAvatar = useCallback(async (formData, id) => {
         dispatch({
             type: 'SET_AUTH_REQUEST',
         });
         try {
-            await apiClient
-                .put(`/users/${id}/updateAvatar`, formData,{
-                    headers: {
-                        'Access-Control-Allow-Origin': '*',
-                        'Content-Type': 'multipart/form-data',
-                        'token': state.token,
-                    }})
-                .then((res) => {
-                    dispatch({
-                        type: 'SET_AUTH',
-                        payload: {
-                            user: res.data,
-                        }
+            if (isNotExpired(state.tokenExpires)) {
+                await apiClient
+                    .put(`/users/${id}/updateAvatar`, formData,{
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                            'token': state.token,
+                        }})
+                    .then((res) => {
+                        dispatch({
+                            type: 'SET_AUTH',
+                            payload: {
+                                user: res.data,
+                            }
+                        });
                     });
-                });
+            } else await refreshToken();
         }catch (e) {
             console.log('Login error with error: ' + e);
         }
-    }, [state.accessToken, dispatch]);
+    }, [state.token, state.tokenExpires, dispatch, refreshToken]);
 
     return {
         user: state.user,
         token: state.token,
+        tokenExpires: state.tokenExpires,
         loading: state.loading,
+        refreshToken,
         editUser,
         getUserByToken,
         updateAvatar,

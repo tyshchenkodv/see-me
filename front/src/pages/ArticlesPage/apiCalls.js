@@ -1,28 +1,22 @@
-import { apiClient } from '../../config/axios';
+import useApi from "../../hooks/useApi";
 
-async function getAllArticles(token) {
-    return apiClient.get('/articles',
-        {
-            headers: {
-                'Content-Type': 'application/json',
-                'token': token,
-            }
-        },
-    );
+export default function ApiCallsArticlesPage() {
+    const { callApi } = useApi();
+
+    const getAllArticles = async () => {
+        return callApi('/articles',
+            'get',
+        );
+    };
+
+    const deleteArticleRequest = async (id) => {
+        return callApi(`/articles/${id}`,
+            'delete',
+        );
+    };
+
+    return {
+        getAllArticles,
+        deleteArticleRequest,
+    }
 }
-
-async function deleteArticleRequest({token, id}) {
-    return apiClient.delete(`/articles/${id}`,
-        {
-            headers: {
-                'Content-Type': 'application/json',
-                'token': token,
-            }
-        },
-    );
-}
-
-export {
-    getAllArticles,
-    deleteArticleRequest,
-};

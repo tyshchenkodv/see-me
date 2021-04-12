@@ -22,6 +22,7 @@ const Reducer = (state, action) => {
                 loading: false,
                 user: null,
                 token: null,
+                tokenExpires: null,
             };
         default:
             return state;

@@ -2,11 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import EditProfile from '../../components/EditProfile';
 import useAuth from "../../hooks/useAuth";
+import ApiCallsProfilePage from "./apiCalls";
 import { useQuery } from 'react-query';
-import { getUserById } from "./apiCalls";
 
 function ProfilePage({ match: { params } }) {
     const { user, editUser, updateAvatar } = useAuth();
+    const { getUserById } = ApiCallsProfilePage();
 
     const { data, isFetching } = useQuery('getUser', async () => {
         if (params?.id === 'edit') {
@@ -22,7 +23,7 @@ function ProfilePage({ match: { params } }) {
                 <EditProfile user={queryUser}
                          editUser={editUser}
                          updateAvatar={updateAvatar}
-                         disabled={user?.id !== queryUser?.id}/>
+                         disabled={parseInt(user?.id) !== parseInt(queryUser?.id)}/>
             }
         </>
     )

@@ -2,19 +2,19 @@ import React, {useCallback, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import AddArticle from '../../components/AddArticle';
 import EditArticle from '../../components/EditArticle';
-import { createArticleRequest, updateArticleRequest, getArticleRequest } from "./apiCalls";
+import ApiCallsAddArticlePage from './apiCalls';
 import { useMutation, useQuery } from "react-query";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
 function AddArticlePage({ match: { params }, history }) {
-    const token = localStorage.getItem('token');
     const {id} = params;
+    const { createArticleRequest, updateArticleRequest, getArticleRequest } = ApiCallsAddArticlePage();
     const [pageType, setPageType] = useState('new');
     const {mutate: createArticle} = useMutation(createArticleRequest);
     const {mutate: updateArticle} = useMutation(updateArticleRequest);
 
     const {data: response, isFetching} = useQuery(`article${id}`, () => {
-        return getArticleRequest({token, id});
+        return getArticleRequest(id);
     });
     const {item: article} = response?.data || {};
 
@@ -25,15 +25,15 @@ function AddArticlePage({ match: { params }, history }) {
 
     const onCreateArticle = useCallback(async formData => {
         try {
-            await createArticle({token, formData});
+            await createArticle(formData);
         } catch (e) {
             console.log(e);
         }
     }, []);
 
-    const onUpdateArticle = useCallback(async ({formData}) => {
+    const onUpdateArticle = useCallback(async ({formData, id}) => {
         try {
-            await updateArticle({token, formData, id});
+            await updateArticle({formData, id});
         } catch (e) {
             console.log(e);
         }

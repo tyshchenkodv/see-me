@@ -1,4 +1,4 @@
-import React, {useEffect, createContext, useReducer} from 'react';
+import React, {useEffect} from 'react';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Container, Grid } from "@material-ui/core";
@@ -12,19 +12,15 @@ import SignUpPage from "./pages/SignUpPage";
 import ErrorBoundary from './errorBoundary/ErrorBoundary';
 import useAuth from "./hooks/useAuth";
 import LinearProgress from "@material-ui/core/LinearProgress";
-import { isExpired } from "./utils/isExpired";
+import { isNotExpired } from "./utils/isNotExpired";
 
 function App ({ location: { pathname }, history }) {
-    const {user, logout, loading, getUserByToken} = useAuth();
+    const {user, logout, loading, token, tokenExpires, getUserByToken} = useAuth();
 
     const checkAuth = async () => {
-        const tokenExpires = localStorage.getItem('tokenExpires') || null;
-        if (isExpired(tokenExpires)) {
-            const tokenString = localStorage.getItem('token') || null;
-            const token = JSON.parse(tokenString);
-
+        if (isNotExpired(tokenExpires)) {
             if (token) {
-                await getUserByToken(token);
+                await getUserByToken();
                 if (pathname === '/signin' || pathname === '/signup') {
                     history.push('/');
                 }

@@ -1,4 +1,4 @@
-export const isExpired = (exp) => {
+export const isNotExpired = (exp) => {
     if (!exp) {
         return false;
     }
