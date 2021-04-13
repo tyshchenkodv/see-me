@@ -144,7 +144,7 @@ export default function useAuth() {
         [dispatch],
     );
 
-    const logout = async () => {
+    const logout = () => {
         dispatch({
             type: 'CLEAR_AUTH_REQUEST',
         });

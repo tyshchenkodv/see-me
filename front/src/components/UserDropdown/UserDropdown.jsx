@@ -21,7 +21,7 @@ function UserDropdown ({ history, logout, user }) {
 
     const handleLogout = async () => {
         setAnchorEl(null);
-        await logout();
+        logout();
         history.push('/signin');
     };
 

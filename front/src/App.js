@@ -12,31 +12,11 @@ import SignUpPage from "./pages/SignUpPage";
 import ErrorBoundary from './errorBoundary/ErrorBoundary';
 import useAuth from "./hooks/useAuth";
 import LinearProgress from "@material-ui/core/LinearProgress";
-import { isNotExpired } from "./utils/isNotExpired";
+import useCheckAuth from "./hooks/useCheckAuth";
 
 function App ({ location: { pathname }, history }) {
-    const {user, logout, loading, token, tokenExpires, getUserByToken} = useAuth();
-
-    const checkAuth = async () => {
-        if (isNotExpired(tokenExpires)) {
-            if (token) {
-                await getUserByToken();
-                if (pathname === '/signin' || pathname === '/signup') {
-                    history.push('/');
-                }
-            } else if (!token && (pathname !== '/signin' && pathname !== '/signup')) {
-                history.push('/signin');
-            }
-        } else {
-            localStorage.removeItem('tokenExpires');
-            localStorage.removeItem('token');
-            history.push('/signin');
-        }
-    };
-
-    useEffect(() => {
-        checkAuth();
-    }, []);
+    useCheckAuth(history, pathname);
+    const {user, logout, loading} = useAuth();
 
     return (
         <Container>
