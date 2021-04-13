@@ -12,27 +12,20 @@ import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import { NavLink } from 'react-router-dom';
 import { useStyles } from './styles';
-import {signIn, signInFacebook, signInGoogle} from './apiCalls';
+import useAuth from "../../hooks/useAuth";
 
 function SignInPage({ history }) {
     const classes = useStyles();
+    const { login, loginFacebook, loginGoogle } = useAuth();
 
     const responseGoogle = async ({profileObj}) => {
-        const {data} = await signInGoogle(profileObj);
-
-        if (data.token) {
-            window.localStorage.setItem('token', data.token);
-            history.push('/');
-        }
+        await loginGoogle(profileObj);
+        history.push('/');
     }
 
-    const responseFacebook = async (response) => {
-        const {data} = await signInFacebook(response);
-
-        if (data.token) {
-            window.localStorage.setItem('token', data.token);
-            history.push('/');
-        }
+    const responseFacebook = async (profileObj) => {
+        await loginFacebook(profileObj);
+        history.push('/');
     }
 
     const handleSubmit = async (event) => {
@@ -43,13 +36,10 @@ function SignInPage({ history }) {
             password: event.target.password.value,
         };
 
-        const {data} = await signIn(reqData);
-
-        if (data.token) {
-            window.localStorage.setItem('token', data.token);
-            history.push('/');
-        }
+        await login(reqData);
+        history.push('/');
     }
+
 
     return (
         <Container component="main" maxWidth="xs">

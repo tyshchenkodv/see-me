@@ -1,15 +1,33 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Paper from '@material-ui/core/Paper';
 import { useStyles } from "./styles";
 import { NavLink } from "react-router-dom";
 import PropTypes from 'prop-types';
 import { typeOfArticlesListItem } from './propTypes';
-import IconButton from '@material-ui/core/IconButton';
-import EditIcon from '@material-ui/icons/Edit';
+import {IconButton, Menu, MenuItem} from '@material-ui/core';
+import { MoreVert } from '@material-ui/icons';
 
-function ArticlesListItem ({ article, setSelectedArticle }) {
+function ArticlesListItem ({ article, setSelectedArticle, deleteArticle, btnVisible }) {
     const classes = useStyles();
-    const handleOpen = () => setSelectedArticle(article);
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleCloseEdit = () => {
+        setAnchorEl(null);
+        setSelectedArticle(article);
+    };
+
+    const handleCloseDelete = () => {
+        setAnchorEl(null);
+        deleteArticle(article.id);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     return (
         <>
@@ -24,13 +42,26 @@ function ArticlesListItem ({ article, setSelectedArticle }) {
                                             {article.title}
                                         </h2>
                                     </NavLink>
-                                    <IconButton onClick={handleOpen} size="small" aria-label="edit">
-                                        <EditIcon/>
+                                    <IconButton onClick={handleClick}
+                                                size="small"
+                                                aria-label="edit"
+                                                hidden={btnVisible}>
+                                        <MoreVert/>
                                     </IconButton>
+                                    <Menu
+                                        id="simple-menu"
+                                        anchorEl={anchorEl}
+                                        keepMounted
+                                        open={Boolean(anchorEl)}
+                                        onClose={handleClose}
+                                    >
+                                        <MenuItem onClick={handleCloseEdit}>Edit</MenuItem>
+                                        <MenuItem onClick={handleCloseDelete}>Delete</MenuItem>
+                                    </Menu>
                                 </div>
                                 <p className="post-meta">Posted by
                                     <NavLink exact
-                                             to={'/users/' + article.userId}> {article.firstName} {article.secondName}</NavLink>
+                                             to={'/profiles/' + article.userId}> {article.firstName} {article.secondName}</NavLink>
                                 </p>
                             </div>
                         </div>
@@ -43,6 +74,8 @@ function ArticlesListItem ({ article, setSelectedArticle }) {
 ArticlesListItem.propTypes = {
     article: typeOfArticlesListItem,
     setSelectedArticle: PropTypes.func.isRequired,
+    deleteArticle: PropTypes.func.isRequired,
+    btnVisible: PropTypes.bool.isRequired,
 };
 
 export default ArticlesListItem;

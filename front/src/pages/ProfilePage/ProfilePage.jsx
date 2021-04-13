@@ -1,34 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import EditProfile from '../../components/EditProfile';
-import Profile from '../../components/Profile';
-
-const USER = {
-    name: 'User',
-    email: 'user@gmail.com',
-    phone: '+123456789',
-    university: 'SumDU',
-    avatar: null,
-};
+import useAuth from "../../hooks/useAuth";
+import ApiCallsProfilePage from "./apiCalls";
+import { useQuery } from 'react-query';
 
 function ProfilePage({ match: { params } }) {
-    const [pageType, setPageType] = useState('edit');
-    const [user, setUser] = useState({});
+    const { user, editUser, updateAvatar } = useAuth();
+    const { getUserById } = ApiCallsProfilePage();
 
-    useEffect(()=>{
-        if(params?.id === 'edit') {
-            setPageType('edit');
-        } else {
-            setPageType(params.id);
-            setUser({...USER, id: params.id});
+    const { data, isFetching } = useQuery('getUser', async () => {
+        if (params?.id === 'edit') {
+            return getUserById(user.id);
         }
-    }, [params.id]);
+        else return getUserById(params?.id);
+    });
+    const queryUser = data?.data.user;
 
     return (
         <>
-            {pageType === 'edit' ?
-                <EditProfile user={user} setUser={setUser}/> :
-                <Profile />
+            {!isFetching &&
+                <EditProfile user={queryUser}
+                         editUser={editUser}
+                         updateAvatar={updateAvatar}
+                         disabled={parseInt(user?.id) !== parseInt(queryUser?.id)}/>
             }
         </>
     )

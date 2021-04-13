@@ -8,7 +8,36 @@ const InternalErrorException = DIContainer.resolve('internalErrorException');
 const BadRequestException = DIContainer.resolve('badRequestException');
 
 module.exports = {
-    async login (req, res, next) {
+    token: async (req, res, next) => {
+        const payload = jwt.verify(req.header('token'), env.get('SECRET'));
+
+        if(payload){
+            const user = await db('users').where({id: payload.id}).first();
+
+            if(user){
+                const token = jwt.sign(
+                    {
+                        id: user.id,
+                        email: user.email,
+                        firstName: user.firstName,
+                    },
+                    env.get('SECRET'),
+                    {
+                        expiresIn: env.get('EXPIRES_IN'),
+                    },
+                );
+
+                const date = new Date();
+
+                return res.status(200).send({
+                    token,
+                    tokenExpires: date.setDate(date.getDate() + 6),
+                });
+            }
+        }
+        return next(new BadRequestException());
+    },
+    login: async (req, res, next) => {
         const { email, password } = req.body;
 
         try {
@@ -55,8 +84,12 @@ module.exports = {
                     },
                 );
 
+                const date = new Date();
+
                 return res.status(200).send({
+                    user: user,
                     token,
+                    tokenExpires: date.setDate(date.getDate() + 6),
                 });
             }
 
@@ -107,7 +140,7 @@ module.exports = {
         return res.redirect(`${env.get('FRONT_HOST')}/login`);
     },
     async facebook(req, res, next) {
-        const { facebookId, name, email } = req.body;
+        const { id: facebookId, name, email } = req.body;
 
         let user = await db('users').where({
             email,
@@ -161,15 +194,19 @@ module.exports = {
                 },
             );
 
+            const date = new Date();
+
             return res.status(200).send({
+                user: user,
                 token,
+                tokenExpires: date.setDate(date.getDate() + 6),
             });
         }catch (error){
             return next(new InternalErrorException(error));
         }
     },
     async google(req, res, next) {
-        const { googleId, name, email } = req.body;
+        const { googleId, name, email, imageUrl } = req.body;
 
         let user = await db('users').where({
             email,
@@ -197,6 +234,7 @@ module.exports = {
                         firstName: nameMass[0],
                         secondName: nameMass[1],
                         email: email,
+                        avatar: imageUrl,
                         verified: true,
                     });
 
@@ -223,8 +261,12 @@ module.exports = {
                 },
             );
 
+            const date = new Date();
+
             return res.status(200).send({
+                user: user,
                 token,
+                tokenExpires: date.setDate(date.getDate() + 6),
             });
         }catch (error){
             return next(new InternalErrorException(error));

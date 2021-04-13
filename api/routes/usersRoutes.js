@@ -3,10 +3,11 @@ const router = express.Router();
 const multer = require('multer');
 const UserController = require('../controllers/UserController');
 const auth = require('../middlewares/auth');
+const crypto = require('crypto');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, './src/uploads/')
+        cb(null, '../uploads')
     },
     filename: function (req, file, cb) {
         crypto.pseudoRandomBytes(16, function (err, raw) {
@@ -22,7 +23,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage: storage});
 
-router.get('/:id/avatar', auth, UserController.getAvatar);
-router.put('/:id/editAvatar', auth, upload.single('avatar'), UserController.updateAvatar);
+router.get('/avatar/:fileName', UserController.getAvatar);
+router.get('/token', auth, UserController.getUserByToken);
+router.put('/:id/updateAvatar', auth, upload.single('avatar'), UserController.updateAvatar);
+router.put('/:id/edit', auth, UserController.updateUser);
+router.get('/:id', UserController.getUserById);
 
 module.exports = router;

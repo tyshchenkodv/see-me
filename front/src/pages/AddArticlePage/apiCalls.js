@@ -1,42 +1,31 @@
-import { apiClient } from '../../config/axios';
+import useApi from "../../hooks/useApi";
 
-async function createArticleRequest({ token, formData }) {
-    return apiClient.post('/articles',
-        formData,
-        {
-            headers: {
-                'Content-Type': 'application/json',
-                'token': token,
-            }
-        },
-    );
+export default function ApiCallsAddArticlePage() {
+    const {callApi} = useApi();
+
+    const createArticleRequest = async (formData) => {
+        return callApi('/articles',
+            'post',
+            formData,
+        );
+    }
+
+    const updateArticleRequest = async ({ formData, id }) => {
+        return callApi(`/articles/${id}`,
+            'put',
+            formData,
+        );
+    }
+
+    const getArticleRequest = async (id) => {
+        return callApi(`/articles/${id}`,
+            'get',
+        );
+    }
+
+    return {
+        createArticleRequest,
+        updateArticleRequest,
+        getArticleRequest,
+    };
 }
-
-async function updateArticleRequest({ token, formData, id }) {
-    return apiClient.put(`/articles/${id}`,
-        formData,
-        {
-            headers: {
-                'Content-Type': 'application/json',
-                'token': token,
-            }
-        },
-    );
-}
-
-async function getArticleRequest({ token, id }) {
-    return apiClient.get(`/articles/${id}`,
-        {
-            headers: {
-                'Content-Type': 'application/json',
-                'token': token,
-            }
-        },
-    );
-}
-
-export {
-    createArticleRequest,
-    updateArticleRequest,
-    getArticleRequest,
-};

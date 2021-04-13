@@ -1,53 +1,76 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import PropTypes from 'prop-types';
 import ArticlesListItem from '../../components/ArticlesListItem';
-import { getAllArticles } from './apiCalls';
+import ApiCallsArticlesPage from './apiCalls';
 import {useMutation, useQuery} from "react-query";
 import LinearProgress from '@material-ui/core/LinearProgress';
-import {updateArticleRequest} from "../AddArticlePage/apiCalls";
+import ApiCallsAddArticlePage from '../AddArticlePage/apiCalls';
 import EditArticle from "../../components/EditArticle/EditArticle";
+import useArticles from '../../hooks/useArticles';
+import useAuth from "../../hooks/useAuth";
 
 function ArticlesPage({history}) {
+    const {setRefetch} = useArticles();
+    const {user, loading} = useAuth();
+    const {getAllArticles, deleteArticleRequest} = ApiCallsArticlesPage();
+    const {updateArticleRequest} = ApiCallsAddArticlePage();
     const [articles, setArticles] = useState([]);
     const [visible, setVisible] = useState(5);
     const [selectedArticle, setSelectedArticle] = useState(false);
-    const {mutate: updateArticle} = useMutation(updateArticleRequest);
+    const {data: response, isFetching, refetch: refetchArticles} = useQuery('articles', async () => {
+        return getAllArticles();
+    }, {manual: true,});
+    const {mutate: updateArticle} = useMutation(updateArticleRequest, {
+        onSuccess: () => {
+            refetchArticles();
+        }
+    });
+    const {mutate: deleteArticle} = useMutation(deleteArticleRequest, {
+        onSuccess: () => {
+            refetchArticles();
+        }
+    });
 
     const onUpdateArticle = useCallback(async ({formData, id}) => {
-        const token = window.localStorage.getItem('token');
         try {
-            await updateArticle({token, formData, id});
+            await updateArticle({formData, id});
         } catch (e) {
             console.log(e);
         }
     }, [updateArticle]);
 
+    const onDeleteArticle = useCallback(async (id) => {
+        try {
+            await deleteArticle(id);
+        } catch (e) {
+            console.log(e);
+        }
+    }, [deleteArticle]);
+
     const loadMore = useCallback(() => {
         setVisible(visible + 5);
     }, [visible]);
 
-    const {data: response, isFetching} = useQuery('articles', () => {
-        const token = window.localStorage.getItem('token');
-        return getAllArticles(token);
-    });
-
     useEffect(() => {
         if (response) {
+            setRefetch(refetchArticles);
             const {posts} = response?.data || [];
             setArticles(posts);
         }
-    }, [setArticles, response]);
+    }, [setRefetch, refetchArticles, setArticles, response]);
 
     return (
         <>
-            {!isFetching ?
+            {!isFetching && !loading ?
                 <div>
                     {articles.slice(0, visible).map((article, index) => {
                         return <ArticlesListItem article={article}
                                                  key={index}
+                                                 btnVisible={user?.id !== article?.userId}
                                                  updateArticle={onUpdateArticle}
                                                  history={history}
-                                                 setSelectedArticle={setSelectedArticle}/>
+                                                 setSelectedArticle={setSelectedArticle}
+                                                 deleteArticle={onDeleteArticle}/>
                     })}
                     <EditArticle updateArticle={updateArticle}
                                  history={history}

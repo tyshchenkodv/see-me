@@ -29,7 +29,7 @@ function AddArticle ({createArticle, history, setOpen, open}) {
         await createArticle(formData);
         setOpen(false);
         history.go(0);
-        history.push('/articles');
+        history.push('/');
     }
 
     return (
@@ -40,17 +40,23 @@ function AddArticle ({createArticle, history, setOpen, open}) {
                     fullWidth>
                 <DialogContent>
                     <Formik
-                        initialValues={{title: '', text: ''}}
+                        initialValues={{title: '',
+                            text: '',
+                            available: '',
+                            image: undefined,
+                        }}
                         onSubmit={handleCloseAdd}
                         validationSchema={articleValidation}
                     >
                         {({
                               errors,
                               touched,
+                              setFieldValue,
                           }) => (
                             <AddEditArticleForm errors={errors}
                                                 touched={touched}
-                                                handleCloseCancel={handleCloseCancel}/>
+                                                handleCloseCancel={handleCloseCancel}
+                                                setFieldValue={setFieldValue}/>
                         )}
                     </Formik>
                 </DialogContent>
@@ -62,6 +68,8 @@ function AddArticle ({createArticle, history, setOpen, open}) {
 AddArticle.propTypes = {
     createArticle: PropTypes.func.isRequired,
     history: PropTypes.object.isRequired,
+    setOpen: PropTypes.func.isRequired,
+    open: PropTypes.bool.isRequired,
 }
 
 export default AddArticle;
