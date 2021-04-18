@@ -1,15 +1,39 @@
 import React, {useState} from 'react';
-import Paper from '@material-ui/core/Paper';
 import { useStyles } from "./styles";
 import { NavLink } from "react-router-dom";
 import PropTypes from 'prop-types';
 import { typeOfArticlesListItem } from './propTypes';
-import {IconButton, Menu, MenuItem} from '@material-ui/core';
-import { MoreVert } from '@material-ui/icons';
+import {
+    IconButton,
+    Menu,
+    MenuItem,
+    Card,
+    CardHeader,
+    CardContent,
+    CardActions,
+    Collapse,
+    Avatar,
+    Button,
+    Typography,
+} from '@material-ui/core';
+import clsx from "clsx";
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import CommentItem from '../CommentItem';
+import {formatDate} from "../../utils/formatDate";
+
+//TODO: edit/delete comments action
+//TODO: reply comments
 
 function ArticlesListItem ({ article, setSelectedArticle, deleteArticle, btnVisible }) {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = useState(null);
+    const [expanded, setExpanded] = useState(false);
+
+    const handleExpandClick = () => {
+        setExpanded(!expanded);
+    };
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -31,43 +55,71 @@ function ArticlesListItem ({ article, setSelectedArticle, deleteArticle, btnVisi
 
     return (
         <>
-            <Paper className={(classes.paper)}>
-                <div className="container">
-                    <div className="row">
-                        <div className="col-lg-8 col-md-10 mx-auto">
-                            <div className="post-preview">
-                                <div className="row">
-                                    <NavLink className="col-9" exact to={'/articles/' + article.id}>
-                                        <h2 className="post-title">
-                                            {article.title}
-                                        </h2>
-                                    </NavLink>
-                                    <IconButton onClick={handleClick}
-                                                size="small"
-                                                aria-label="edit"
-                                                hidden={btnVisible}>
-                                        <MoreVert/>
-                                    </IconButton>
-                                    <Menu
-                                        id="simple-menu"
-                                        anchorEl={anchorEl}
-                                        keepMounted
-                                        open={Boolean(anchorEl)}
-                                        onClose={handleClose}
-                                    >
-                                        <MenuItem onClick={handleCloseEdit}>Edit</MenuItem>
-                                        <MenuItem onClick={handleCloseDelete}>Delete</MenuItem>
-                                    </Menu>
-                                </div>
-                                <p className="post-meta">Posted by
-                                    <NavLink exact
-                                             to={'/profiles/' + article.userId}> {article.firstName} {article.secondName}</NavLink>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </Paper>
+            <Card className={classes.root}>
+                <CardHeader
+                    avatar={
+                        <NavLink exact to={`/profiles/${article?.user.id}`}>
+                            <Avatar aria-label="recipe"
+                                    className={classes.avatar}
+                                    src={`http://localhost:3333/users/avatar/${article?.user.avatar}`}/>
+                        </NavLink>
+                    }
+                    action={
+                        <IconButton onClick={handleClick}
+                                    aria-label="settings"
+                                    hidden={btnVisible}>
+                            <MoreVertIcon/>
+                        </IconButton>
+                    }
+                    title={article?.user.firstName + ' ' + article?.user.secondName}
+                    subheader={formatDate(article?.date)}
+                />
+                <CardContent>
+                    <Typography variant="h4"
+                                align="center"
+                                color="textPrimary"
+                                paragraph
+                                component="p">
+                        {article?.title}
+                    </Typography>
+                    <Typography variant="body1" color="textSecondary" component="p">
+                        {article?.text}
+                    </Typography>
+                </CardContent>
+                <CardActions disableSpacing>
+                    <IconButton aria-label="add to favorites">
+                        <FavoriteIcon color={'error'}/>
+                    </IconButton>
+                    <Button
+                        onClick={handleExpandClick}
+                        aria-expanded={expanded}
+                        aria-label="show more"
+                        disabled={article?.comments.length === 0}
+                        endIcon={<ExpandMoreIcon className={clsx(classes.expand, {
+                            [classes.expandOpen]: expanded,
+                        })}/>}
+                    >
+                        Comments: {article?.commentsCount}
+                    </Button>
+                </CardActions>
+                <Collapse in={expanded} timeout="auto" unmountOnExit>
+                    <CardContent>
+                            {article?.comments.map((comment) =>
+                                <CommentItem comment={comment}/>
+                            )}
+                    </CardContent>
+                </Collapse>
+            </Card>
+            <Menu
+                id="simple-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+            >
+                <MenuItem onClick={handleCloseEdit}>Edit</MenuItem>
+                <MenuItem onClick={handleCloseDelete}>Delete</MenuItem>
+            </Menu>
         </>);
 }
 

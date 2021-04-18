@@ -10,6 +10,8 @@
     "@testing-library/user-event": "12.2.2",
     "axios": "0.21.1",
     "bootstrap": "4.5.3",
+    "clsx": "1.1.1",
+    "dayjs": "1.10.4",
     "formik": "2.2.6",
     "path-to-regexp": "6.2.0",
     "prop-types": "15.7.2",

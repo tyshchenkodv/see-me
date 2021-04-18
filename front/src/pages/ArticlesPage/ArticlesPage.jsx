@@ -66,7 +66,7 @@ function ArticlesPage({history}) {
                     {articles.slice(0, visible).map((article, index) => {
                         return <ArticlesListItem article={article}
                                                  key={index}
-                                                 btnVisible={user?.id !== article?.userId}
+                                                 btnVisible={user?.id !== article?.user.id}
                                                  updateArticle={onUpdateArticle}
                                                  history={history}
                                                  setSelectedArticle={setSelectedArticle}

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Container, Grid } from "@material-ui/core";

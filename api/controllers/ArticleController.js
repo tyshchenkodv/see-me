@@ -1,18 +1,51 @@
 const DIContainer = require('../services/DIContainer');
 const db = DIContainer.resolve('db');
+const n = require('nested-knex');
+const prepareComments = require('../services/prepareComments');
 
 module.exports = {
     list: async (req, res) => {
-        const posts = await db.select('articles.id',
-            'title',
-            'text',
-            'userId',
-            'firstName',
-            'secondName').from('articles')
-                .innerJoin('users', 'users.id', 'articles.userId');
+        const posts = await n.array(
+            n.type({
+                id: n.number("articles.id", { id: true }),
+                title: n.string("articles.title"),
+                text: n.string("articles.text"),
+                date: n.date("articles.date"),
+                available: n.string("articles.available"),
+                user: n.type({
+                    id: n.number("articleUser.id", { id: true }),
+                    firstName: n.string("articleUser.firstName"),
+                    secondName: n.string("articleUser.secondName"),
+                    avatar: n.string("commentUser.avatar"),
+                }),
+                comments: n.array(n.type({
+                    id: n.number('comments.id', { id: true }),
+                    text: n.string('comments.text'),
+                    date: n.date('comments.date'),
+                    user: n.type({
+                        id: n.number("commentUser.id", { id: true }),
+                        firstName: n.string("commentUser.firstName"),
+                        secondName: n.string("commentUser.secondName"),
+                        avatar: n.string("commentUser.avatar"),
+                    }),
+                    parentId: n.number("comments.parentId", { id: true }),
+                }))
+            }),
+            ).withQuery(
+                db.from("articles")
+                    .leftJoin("users AS articleUser", "articles.userId", "articleUser.id")
+                    .leftJoin("comments", "articles.id", "comments.articleId")
+                    .leftJoin("comments AS subComment", "comments.parentId", "comments.id")
+                    .leftJoin("users AS commentUser", "comments.userId","commentUser.id"),
+            );
+
 
         return res.status(200).send({
-            posts: posts,
+            posts: posts.map((post) => ({
+                ...post,
+                commentsCount: post.comments.length,
+                comments: prepareComments(post.comments),
+            })),
         });
     },
     item: async (req, res, next) => {
