@@ -3,6 +3,7 @@ const app = express();
 const ArticleRoutes = require('./routes/articlesRoutes');
 const AuthRoutes = require('./routes/authRoutes');
 const UserRoutes = require('./routes/usersRoutes');
+const CommentRoutes = require('./routes/commentsRoutes');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const errorHandler = require('./middlewares/errorHandler');
@@ -19,10 +20,14 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
+app.ws('/comments-ws', ()=>{});
+app.commentsClients = expressWs.getWss('/comments-ws').clients;
+
 app.use(cors());
 app.use('/auth', AuthRoutes);
 app.use('/articles', ArticleRoutes);
 app.use('/users', UserRoutes);
+app.use('/comments', CommentRoutes);
 
 app.use(errorHandler);
 

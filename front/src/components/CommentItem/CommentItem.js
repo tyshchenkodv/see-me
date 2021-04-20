@@ -17,24 +17,31 @@ import { useStyles } from "./styles";
 import useAuth from "../../hooks/useAuth";
 import {formatDate} from "../../utils/formatDate";
 import PropTypes from 'prop-types';
+import CommentDialog from "../CommentDialog";
 
-function CommentItem({comment}) {
+function CommentItem({comment, articleId, createComment, deleteComment, updateComment}) {
     const classes = useStyles();
     const { user } = useAuth();
+    const [openCommentEdit, setOpenCommentEdit] = useState(false);
+    const [openCommentReply, setOpenCommentReply] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
 
+    const handleClickReply = () => {
+        setOpenCommentReply(true);
+    }
+
     const handleCloseEdit = () => {
         setAnchorEl(null);
-        //setSelectedArticle(article);
+        setOpenCommentEdit(true);
     };
 
     const handleCloseDelete = () => {
         setAnchorEl(null);
-        //deleteArticle(article.id);
+        deleteComment(comment?.id);
     };
 
     const handleClose = () => {
@@ -69,6 +76,7 @@ function CommentItem({comment}) {
                 <CardActions disableSpacing>
                     <Button
                         startIcon={<CommentIcon/>}
+                        onClick={handleClickReply}
                     >
                         Reply
                     </Button>
@@ -76,7 +84,11 @@ function CommentItem({comment}) {
                 <CardContent>
                     { comment?.items.length !== 0 && (
                         comment?.items.map((item) =>
-                            <CommentItem comment={item}/>
+                            <CommentItem comment={item}
+                                         articleId={articleId}
+                                         createComment={createComment}
+                                         deleteComment={deleteComment}
+                                         updateComment={updateComment}/>
                         )
                     )}
                 </CardContent>
@@ -91,6 +103,18 @@ function CommentItem({comment}) {
                 <MenuItem onClick={handleCloseEdit}>Edit</MenuItem>
                 <MenuItem onClick={handleCloseDelete}>Delete</MenuItem>
             </Menu>
+            <CommentDialog openComment={openCommentEdit}
+                           setOpenComment={setOpenCommentEdit}
+                           comment={comment}
+                           userId={user?.id}
+                           articleId={articleId}
+                           apiFunction={updateComment}/>
+            <CommentDialog openComment={openCommentReply}
+                           setOpenComment={setOpenCommentReply}
+                           userId={user?.id}
+                           articleId={articleId}
+                           apiFunction={createComment}
+                           parentId={comment?.id}/>
         </>
     );
 }
@@ -103,6 +127,10 @@ CommentItem.propTypes = {
        user: PropTypes.object.isRequired,
        items: PropTypes.array,
     }),
+    articleId: PropTypes.number,
+    createComment: PropTypes.func.isRequired,
+    deleteComment: PropTypes.func.isRequired,
+    updateComment:PropTypes.func.isRequired,
 };
 
 export default CommentItem;

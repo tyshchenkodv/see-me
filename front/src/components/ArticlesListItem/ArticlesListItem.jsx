@@ -22,14 +22,18 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import CommentItem from '../CommentItem';
 import {formatDate} from "../../utils/formatDate";
+import CommentIcon from "@material-ui/icons/Comment";
+import CommentDialog from "../CommentDialog";
 
-//TODO: edit/delete comments action
-//TODO: reply comments
-
-function ArticlesListItem ({ article, setSelectedArticle, deleteArticle, btnVisible }) {
+function ArticlesListItem ({ article, setSelectedArticle, deleteArticle, btnVisible, userId, createComment, deleteComment, updateComment }) {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = useState(null);
     const [expanded, setExpanded] = useState(false);
+    const [openComment, setOpenComment] = useState(false);
+
+    const handleOpenComment = () => {
+        setOpenComment(true);
+    }
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
@@ -101,11 +105,21 @@ function ArticlesListItem ({ article, setSelectedArticle, deleteArticle, btnVisi
                     >
                         Comments: {article?.commentsCount}
                     </Button>
+                    <Button
+                        onClick={handleOpenComment}
+                        endIcon={<CommentIcon/>}
+                    >
+                        Add comment
+                    </Button>
                 </CardActions>
                 <Collapse in={expanded} timeout="auto" unmountOnExit>
                     <CardContent>
                             {article?.comments.map((comment) =>
-                                <CommentItem comment={comment}/>
+                                <CommentItem comment={comment}
+                                             articleId={article?.id}
+                                             createComment={createComment}
+                                             deleteComment={deleteComment}
+                                             updateComment={updateComment}/>
                             )}
                     </CardContent>
                 </Collapse>
@@ -120,6 +134,11 @@ function ArticlesListItem ({ article, setSelectedArticle, deleteArticle, btnVisi
                 <MenuItem onClick={handleCloseEdit}>Edit</MenuItem>
                 <MenuItem onClick={handleCloseDelete}>Delete</MenuItem>
             </Menu>
+            <CommentDialog openComment={openComment}
+                           setOpenComment={setOpenComment}
+                           userId={userId}
+                           articleId={article?.id}
+                           apiFunction={createComment}/>
         </>);
 }
 
@@ -128,6 +147,10 @@ ArticlesListItem.propTypes = {
     setSelectedArticle: PropTypes.func.isRequired,
     deleteArticle: PropTypes.func.isRequired,
     btnVisible: PropTypes.bool.isRequired,
+    userId: PropTypes.number.isRequired,
+    createComment: PropTypes.func.isRequired,
+    deleteComment: PropTypes.func.isRequired,
+    updateComment: PropTypes.func.isRequired,
 };
 
 export default ArticlesListItem;

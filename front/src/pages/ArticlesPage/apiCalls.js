@@ -15,8 +15,23 @@ export default function ApiCallsArticlesPage() {
         );
     };
 
+    const createCommentRequest = async formData => {
+        return callApi('/comments', 'post', formData);
+    }
+
+    const updateCommentRequest = async formData => {
+        return callApi(`/comments/${formData.id}`, 'put', formData);
+    }
+
+    const deleteCommentRequest = async id => {
+        return callApi(`/comments/${id}`, 'delete');
+    }
+
     return {
         getAllArticles,
         deleteArticleRequest,
+        createCommentRequest,
+        deleteCommentRequest,
+        updateCommentRequest,
     }
 }

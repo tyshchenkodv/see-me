@@ -8,11 +8,12 @@ import ApiCallsAddArticlePage from '../AddArticlePage/apiCalls';
 import EditArticle from "../../components/EditArticle/EditArticle";
 import useArticles from '../../hooks/useArticles';
 import useAuth from "../../hooks/useAuth";
+import { wsConnection } from "../../ws";
 
 function ArticlesPage({history}) {
     const {setRefetch} = useArticles();
     const {user, loading} = useAuth();
-    const {getAllArticles, deleteArticleRequest} = ApiCallsArticlesPage();
+    const {getAllArticles, deleteArticleRequest, createCommentRequest, deleteCommentRequest, updateCommentRequest} = ApiCallsArticlesPage();
     const {updateArticleRequest} = ApiCallsAddArticlePage();
     const [articles, setArticles] = useState([]);
     const [visible, setVisible] = useState(5);
@@ -30,6 +31,9 @@ function ArticlesPage({history}) {
             refetchArticles();
         }
     });
+    const {mutate: createComment} = useMutation(createCommentRequest);
+    const {mutate: deleteComment} = useMutation(deleteCommentRequest);
+    const {mutate: updateComment} = useMutation(updateCommentRequest);
 
     const onUpdateArticle = useCallback(async ({formData, id}) => {
         try {
@@ -47,6 +51,30 @@ function ArticlesPage({history}) {
         }
     }, [deleteArticle]);
 
+    const onCreateComment = useCallback(async formData => {
+        try {
+            await createComment(formData);
+        } catch (e) {
+            console.log(e);
+        }
+    }, [createComment]);
+
+    const onDeleteComment = useCallback(async id => {
+        try {
+            await deleteComment(id);
+        } catch (e) {
+            console.log(e);
+        }
+    }, [deleteComment]);
+
+    const onUpdateComment = useCallback(async formData => {
+        try {
+            await updateComment(formData);
+        } catch (e) {
+            console.log(e);
+        }
+    }, [updateComment]);
+
     const loadMore = useCallback(() => {
         setVisible(visible + 5);
     }, [visible]);
@@ -59,20 +87,33 @@ function ArticlesPage({history}) {
         }
     }, [setRefetch, refetchArticles, setArticles, response]);
 
+    useEffect(()=>{
+        wsConnection.onmessage = function (event){
+            const wsData = JSON.parse(event.data);
+            setArticles(articles.map(article => article.id === wsData.articleId ? {
+                ...article,
+                comments: wsData.comments,
+                commentsCount: wsData.commentsCount,
+            } : article));
+        }
+    }, [articles]);
+
     return (
         <>
             {!isFetching && !loading ?
                 <div>
-                    {articles.slice(0, visible).map((article, index) => {
-                        return <ArticlesListItem article={article}
-                                                 key={index}
-                                                 btnVisible={user?.id !== article?.user.id}
-                                                 updateArticle={onUpdateArticle}
-                                                 history={history}
+                    {articles.slice(0, visible).map((article) => {
+                        return <ArticlesListItem key={article.id}
+                                                 article={article}
                                                  setSelectedArticle={setSelectedArticle}
-                                                 deleteArticle={onDeleteArticle}/>
+                                                 deleteArticle={onDeleteArticle}
+                                                 btnVisible={user?.id !== article?.user.id}
+                                                 userId={user?.id}
+                                                 createComment={onCreateComment}
+                                                 deleteComment={onDeleteComment}
+                                                 updateComment={onUpdateComment}/>
                     })}
-                    <EditArticle updateArticle={updateArticle}
+                    <EditArticle updateArticle={onUpdateArticle}
                                  history={history}
                                  setSelectedArticle={setSelectedArticle}
                                  selectedArticle={selectedArticle}/>
