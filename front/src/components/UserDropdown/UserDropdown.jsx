@@ -1,6 +1,8 @@
+import { Avatar,Button, Menu, MenuItem } from '@material-ui/core';
+import PropTypes from 'prop-types';
 import React, {useState} from 'react';
-import { Button, Menu, MenuItem, Avatar } from "@material-ui/core";
-import PropTypes from "prop-types";
+
+import { API_HOST } from '../../config/configData.json';
 
 function UserDropdown ({ history, logout, user }) {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -16,7 +18,7 @@ function UserDropdown ({ history, logout, user }) {
 
     const handleProfile = () => {
         setAnchorEl(null);
-        history.push(`/profiles/edit`);
+        history.push('/profiles/edit');
     };
 
     const handleLogout = async () => {
@@ -33,7 +35,7 @@ function UserDropdown ({ history, logout, user }) {
                 aria-haspopup="true"
                 onClick={handleMenu}
                 color="inherit"
-                startIcon={<Avatar src={`http://localhost:3333/users/avatar/${user?.avatar}`} />}
+                startIcon={<Avatar src={`${ API_HOST }/users/avatar/${ user?.avatar }`} />}
             >
                 {user?.firstName + ' ' + user?.secondName}
             </Button>
@@ -64,6 +66,6 @@ UserDropdown.propTypes = {
     history: PropTypes.object.isRequired,
     logout: PropTypes.func.isRequired,
     user: PropTypes.object.isRequired,
-}
+};
 
 export default UserDropdown;

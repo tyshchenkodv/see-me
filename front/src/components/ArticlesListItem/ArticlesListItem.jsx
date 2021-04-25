@@ -1,29 +1,31 @@
-import React, {useState} from 'react';
-import { useStyles } from "./styles";
-import { NavLink } from "react-router-dom";
-import PropTypes from 'prop-types';
-import { typeOfArticlesListItem } from './propTypes';
 import {
+    Avatar,
+    Button,
+    Card,
+    CardActions,
+    CardContent,
+    CardHeader,
+    Collapse,
     IconButton,
     Menu,
     MenuItem,
-    Card,
-    CardHeader,
-    CardContent,
-    CardActions,
-    Collapse,
-    Avatar,
-    Button,
     Typography,
 } from '@material-ui/core';
-import clsx from "clsx";
-import FavoriteIcon from '@material-ui/icons/Favorite';
+import CommentIcon from '@material-ui/icons/Comment';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import FavoriteIcon from '@material-ui/icons/Favorite';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import clsx from 'clsx';
+import PropTypes from 'prop-types';
+import React, {useState} from 'react';
+import { NavLink } from 'react-router-dom';
+
+import { API_HOST } from '../../config/configData.json';
+import {formatDate} from '../../utils/formatDate';
+import CommentDialog from '../CommentDialog';
 import CommentItem from '../CommentItem';
-import {formatDate} from "../../utils/formatDate";
-import CommentIcon from "@material-ui/icons/Comment";
-import CommentDialog from "../CommentDialog";
+import { typeOfArticle } from './propTypes';
+import { useStyles } from './styles';
 
 function ArticlesListItem ({ article, setSelectedArticle, deleteArticle, btnVisible, userId, createComment, deleteComment, updateComment }) {
     const classes = useStyles();
@@ -33,7 +35,7 @@ function ArticlesListItem ({ article, setSelectedArticle, deleteArticle, btnVisi
 
     const handleOpenComment = () => {
         setOpenComment(true);
-    }
+    };
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
@@ -62,16 +64,16 @@ function ArticlesListItem ({ article, setSelectedArticle, deleteArticle, btnVisi
             <Card className={classes.root}>
                 <CardHeader
                     avatar={
-                        <NavLink exact to={`/profiles/${article?.user.id}`}>
+                        <NavLink exact to={`/profiles/${ article?.user.id }`}>
                             <Avatar aria-label="recipe"
-                                    className={classes.avatar}
-                                    src={`http://localhost:3333/users/avatar/${article?.user.avatar}`}/>
+                                className={classes.avatar}
+                                src={`${ API_HOST }/users/avatar/${ article?.user.avatar }`}/>
                         </NavLink>
                     }
                     action={
                         <IconButton onClick={handleClick}
-                                    aria-label="settings"
-                                    hidden={btnVisible}>
+                            aria-label="settings"
+                            hidden={btnVisible}>
                             <MoreVertIcon/>
                         </IconButton>
                     }
@@ -80,10 +82,10 @@ function ArticlesListItem ({ article, setSelectedArticle, deleteArticle, btnVisi
                 />
                 <CardContent>
                     <Typography variant="h4"
-                                align="center"
-                                color="textPrimary"
-                                paragraph
-                                component="p">
+                        align="center"
+                        color="textPrimary"
+                        paragraph
+                        component="p">
                         {article?.title}
                     </Typography>
                     <Typography variant="body1" color="textSecondary" component="p">
@@ -114,13 +116,14 @@ function ArticlesListItem ({ article, setSelectedArticle, deleteArticle, btnVisi
                 </CardActions>
                 <Collapse in={expanded} timeout="auto" unmountOnExit>
                     <CardContent>
-                            {article?.comments.map((comment) =>
-                                <CommentItem comment={comment}
-                                             articleId={article?.id}
-                                             createComment={createComment}
-                                             deleteComment={deleteComment}
-                                             updateComment={updateComment}/>
-                            )}
+                        {article?.comments.map((comment) =>
+                            <CommentItem key={comment.id}
+                                comment={comment}
+                                articleId={article?.id}
+                                createComment={createComment}
+                                deleteComment={deleteComment}
+                                updateComment={updateComment}/>
+                        )}
                     </CardContent>
                 </Collapse>
             </Card>
@@ -135,15 +138,19 @@ function ArticlesListItem ({ article, setSelectedArticle, deleteArticle, btnVisi
                 <MenuItem onClick={handleCloseDelete}>Delete</MenuItem>
             </Menu>
             <CommentDialog openComment={openComment}
-                           setOpenComment={setOpenComment}
-                           userId={userId}
-                           articleId={article?.id}
-                           apiFunction={createComment}/>
+                setOpenComment={setOpenComment}
+                userId={userId}
+                articleId={article?.id}
+                apiFunction={createComment}/>
         </>);
 }
 
 ArticlesListItem.propTypes = {
-    article: typeOfArticlesListItem,
+    article: PropTypes.shape(
+        PropTypes.arrayOf(
+            typeOfArticle,
+        ).isRequired,
+    ).isRequired,
     setSelectedArticle: PropTypes.func.isRequired,
     deleteArticle: PropTypes.func.isRequired,
     btnVisible: PropTypes.bool.isRequired,

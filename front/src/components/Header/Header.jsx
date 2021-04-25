@@ -1,13 +1,14 @@
-import React, {useState, useCallback} from 'react';
+import { AppBar, Button,Toolbar, Typography } from '@material-ui/core';
+import PropTypes from 'prop-types';
+import React, {useCallback,useState} from 'react';
+import {useMutation} from 'react-query';
 import { NavLink } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, Button } from '@material-ui/core';
+
+import useArticles from '../../hooks/useArticles';
+import ApiCallsAddArticlePage from '../../pages/AddArticlePage/apiCalls';
+import AddArticle from '../AddArticle';
+import UserDropdown from '../UserDropdown/UserDropdown';
 import { useStyles } from './styles';
-import UserDropdown from "../UserDropdown/UserDropdown";
-import PropTypes from "prop-types";
-import {useMutation} from "react-query";
-import ApiCallsAddArticlePage from "../../pages/AddArticlePage/apiCalls";
-import AddArticle from "../AddArticle";
-import useArticles from "../../hooks/useArticles";
 
 function Header ({ history, user, logout }) {
     const classes = useStyles();
@@ -18,12 +19,12 @@ function Header ({ history, user, logout }) {
     const tokenString = localStorage.getItem('token') || null;
     const token = JSON.parse(tokenString);
 
-    const onCreateArticle = useCallback(async formData => {
+    const onCreateArticle = useCallback(async (formData) => {
         try {
             await createArticle({token, formData});
             refetchArticles();
-        } catch (e) {
-            console.log(e);
+        } catch (error) {
+            console.log(error);
         }
     }, [createArticle, token, refetchArticles]);
 
@@ -46,11 +47,11 @@ function Header ({ history, user, logout }) {
             Add article
         </Button>
         <AddArticle history={history}
-                    createArticle={onCreateArticle}
-                    setOpen={setOpen}
-                    open={open}/>
+            createArticle={onCreateArticle}
+            setOpen={setOpen}
+            open={open}/>
         <UserDropdown history={history} user={user} logout={logout}/>
-    </>
+    </>;
 
     const nonAuthButtons = <>
         <Button
@@ -85,6 +86,6 @@ Header.propTypes = {
     history: PropTypes.object.isRequired,
     user: PropTypes.object.isRequired,
     logout:PropTypes.func.isRequired,
-}
+};
 
 export default Header;

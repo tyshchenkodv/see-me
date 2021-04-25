@@ -1,11 +1,12 @@
-import { useEffect } from "react";
-import useAuth from "./useAuth";
-import { isNotExpired } from "../utils/isNotExpired";
+import {useCallback, useEffect} from 'react';
+
+import { isNotExpired } from '../utils/isNotExpired';
+import useAuth from './useAuth';
 
 export default function useCheckAuth(history, pathname) {
     const {token, tokenExpires, getUserByToken, logout} = useAuth();
 
-    const checkAuth = async () => {
+    const checkAuth = useCallback(async () => {
         if (isNotExpired(tokenExpires)) {
             if (token) {
                 await getUserByToken();
@@ -21,7 +22,7 @@ export default function useCheckAuth(history, pathname) {
             localStorage.removeItem('token');
             history.push('/signin');
         }
-    };
+    }, [getUserByToken, history, logout, pathname, tokenExpires, token]);
 
     useEffect(() => {
         checkAuth();

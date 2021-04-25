@@ -1,28 +1,25 @@
-import React, { useState, forwardRef } from 'react';
 import {
     Avatar,
     Button,
-    CssBaseline,
-    TextField,
-    Grid,
-    Typography,
     Container,
+    CssBaseline,
     Dialog,
-    DialogTitle,
+    DialogActions,
     DialogContent,
     DialogContentText,
-    DialogActions,
-    Slide,
+    DialogTitle,
+    Grid,
+    TextField,
+    Typography,
 } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import { useStyles } from './styles';
-import PropTypes from "prop-types";
-import { NavLink } from "react-router-dom";
-import useAuth from "../../hooks/useAuth";
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 
-const Transition = forwardRef(function Transition(props, ref) {
-    return <Slide direction="up" ref={ref} {...props} />;
-});
+import useAuth from '../../hooks/useAuth';
+import { useStyles } from './styles';
+import { Transition } from './Transition';
 
 function SignUpPage({ history }) {
     const [open, setOpen] = useState(false);
@@ -50,7 +47,7 @@ function SignUpPage({ history }) {
 
         await signup(reqData);
         handleClickOpen();
-    }
+    };
 
     return (
         <Container component="main" maxWidth="xs">
@@ -73,7 +70,6 @@ function SignUpPage({ history }) {
                                 fullWidth
                                 id="firstName"
                                 label="First Name"
-                                autoFocus
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -155,6 +151,6 @@ function SignUpPage({ history }) {
 
 SignUpPage.propTypes = {
     history: PropTypes.object.isRequired,
-}
+};
 
 export default SignUpPage;

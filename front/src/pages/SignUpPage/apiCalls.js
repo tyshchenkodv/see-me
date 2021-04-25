@@ -6,7 +6,7 @@ async function signUp(data) {
         {
             headers: {
                 'Content-Type': 'application/json',
-            }
+            },
         },
     );
 }

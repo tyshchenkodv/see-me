@@ -1,9 +1,12 @@
-import React, {useState, useRef} from 'react';
+import 'cropperjs/dist/cropper.css';
+
+import {Avatar, Button, Dialog, DialogActions,DialogContent, DialogTitle, Grid} from '@material-ui/core';
+import { Field, Form,Formik } from 'formik';
 import PropTypes from 'prop-types';
-import { Field, Formik, Form } from 'formik';
-import {Grid, Button, Avatar, Dialog, DialogTitle, DialogContent, DialogActions} from "@material-ui/core";
-import Cropper from "react-cropper";
-import "cropperjs/dist/cropper.css";
+import React, {useRef,useState} from 'react';
+import Cropper from 'react-cropper';
+
+import { API_HOST } from '../../config/configData.json';
 import { useStyles } from './styles';
 
 function EditProfile ({user, editUser, updateAvatar, disabled}) {
@@ -21,14 +24,15 @@ function EditProfile ({user, editUser, updateAvatar, disabled}) {
         setImage(null);
     };
 
-    const handleChange = async e => {
+    const handleChange = async (event) => {
         handleClickOpen();
-        e.preventDefault();
+        event.preventDefault();
 
-        const file = e.target.files[0];
+        const file = event.target.files[0];
 
         if (file.type.match('image.*') && file.size < 10000000) {
             const reader = new FileReader();
+
             reader.onload = () => {
                 setImage(reader.result);
             };
@@ -43,14 +47,15 @@ function EditProfile ({user, editUser, updateAvatar, disabled}) {
         const cropper = imageElement?.cropper;
         const blob = await fetch(cropper.getCroppedCanvas().toDataURL()).then((res) => res.blob());
         const formData = new FormData();
-        formData.append("avatar", blob);
+
+        formData.append('avatar', blob);
 
         await updateAvatar(formData, user.id);
 
         handleClose();
     };
 
-    const handleSubmit = async formData => {
+    const handleSubmit = async (formData) => {
         await editUser({user: formData, id: user.id});
     };
 
@@ -69,16 +74,16 @@ function EditProfile ({user, editUser, updateAvatar, disabled}) {
                     onSubmit={handleSubmit}
                 >
                     {({
-                          errors,
-                          touched,
-                      }) => (
+                        errors,
+                        touched,
+                    }) => (
                         <Form className={classes.form}>
                             <Grid container>
                                 <Grid item xs={12}>
                                     <div className="form-group">
                                         <label>First name</label>
                                         <Field type="text" className="form-control" id="firstName" name="firstName"
-                                               aria-describedby="firstName" disabled={disabled}/>
+                                            aria-describedby="firstName" disabled={disabled}/>
                                         {touched.firstName && errors.firstName ? (
                                             <div className="alert alert-danger">{errors.firstName}</div>
                                         ) : null}
@@ -88,7 +93,7 @@ function EditProfile ({user, editUser, updateAvatar, disabled}) {
                                     <div className="form-group">
                                         <label>Second name</label>
                                         <Field type="text" className="form-control" id="secondName" name="secondName"
-                                               aria-describedby="secondName" disabled={disabled}/>
+                                            aria-describedby="secondName" disabled={disabled}/>
                                         {touched.secondName && errors.secondName ? (
                                             <div className="alert alert-danger">{errors.secondName}</div>
                                         ) : null}
@@ -98,7 +103,7 @@ function EditProfile ({user, editUser, updateAvatar, disabled}) {
                                     <div className="form-group">
                                         <label>Email</label>
                                         <Field type="email" className="form-control" id="email" name="email"
-                                               aria-describedby="email" disabled={disabled}/>
+                                            aria-describedby="email" disabled={disabled}/>
                                         {touched.email && errors.email ? (
                                             <div className="alert alert-danger">{errors.email}</div>
                                         ) : null}
@@ -108,7 +113,7 @@ function EditProfile ({user, editUser, updateAvatar, disabled}) {
                                     <div className="form-group">
                                         <label>Phone</label>
                                         <Field type="text" className="form-control" id="phone" name="phone"
-                                               aria-describedby="phone" disabled={disabled}/>
+                                            aria-describedby="phone" disabled={disabled}/>
                                         {touched.phone && errors.phone ? (
                                             <div className="alert alert-danger">{errors.phone}</div>
                                         ) : null}
@@ -118,7 +123,7 @@ function EditProfile ({user, editUser, updateAvatar, disabled}) {
                                     <div className="form-group">
                                         <label>University</label>
                                         <Field type="text" className="form-control" id="university" name="university"
-                                               aria-describedby="university" disabled={disabled}/>
+                                            aria-describedby="university" disabled={disabled}/>
                                         {touched.university && errors.university ? (
                                             <div className="alert alert-danger">{errors.university}</div>
                                         ) : null}
@@ -135,9 +140,9 @@ function EditProfile ({user, editUser, updateAvatar, disabled}) {
                 </Formik>
                 <div className={classes.avatar}>
                     <Button component="label" disabled={disabled}>
-                            <Avatar alt={user?.secondName}
-                                    src={`http://localhost:3333/users/avatar/${user?.avatar}`}
-                                    className={classes.avatarPhoto}/>
+                        <Avatar alt={user?.secondName}
+                            src={`${ API_HOST }/users/avatar/${ user?.avatar }`}
+                            className={classes.avatarPhoto}/>
                         <input onChange={handleChange} hidden type="file" name="image"/>
                     </Button>
                 </div>
@@ -158,7 +163,7 @@ function EditProfile ({user, editUser, updateAvatar, disabled}) {
                         Cancel
                     </Button>
                     {image &&
-                    <Button color="primary" autoFocus onClick={cropImage}>Crop!</Button>}
+                    <Button color="primary" onClick={cropImage}>Crop!</Button>}
                 </DialogActions>
             </Dialog>
         </>
@@ -169,6 +174,7 @@ EditProfile.propTypes = {
     user: PropTypes.object.isRequired,
     editUser: PropTypes.func.isRequired,
     updateAvatar: PropTypes.func.isRequired,
+    disabled: PropTypes.bool.isRequired,
 };
 
 export default EditProfile;

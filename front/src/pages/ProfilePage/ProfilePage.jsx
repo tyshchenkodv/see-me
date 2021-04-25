@@ -1,9 +1,10 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import EditProfile from '../../components/EditProfile';
-import useAuth from "../../hooks/useAuth";
-import ApiCallsProfilePage from "./apiCalls";
+import React from 'react';
 import { useQuery } from 'react-query';
+
+import EditProfile from '../../components/EditProfile';
+import useAuth from '../../hooks/useAuth';
+import ApiCallsProfilePage from './apiCalls';
 
 function ProfilePage({ match: { params } }) {
     const { user, editUser, updateAvatar } = useAuth();
@@ -21,12 +22,12 @@ function ProfilePage({ match: { params } }) {
         <>
             {!isFetching &&
                 <EditProfile user={queryUser}
-                         editUser={editUser}
-                         updateAvatar={updateAvatar}
-                         disabled={parseInt(user?.id) !== parseInt(queryUser?.id)}/>
+                    editUser={editUser}
+                    updateAvatar={updateAvatar}
+                    disabled={parseInt(user?.id) !== parseInt(queryUser?.id)}/>
             }
         </>
-    )
+    );
 }
 
 ProfilePage.propTypes = {

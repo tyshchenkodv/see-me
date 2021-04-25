@@ -1,4 +1,4 @@
-import useApi from "../../hooks/useApi";
+import useApi from '../../hooks/useApi';
 
 export default function ApiCallsAddArticlePage() {
     const {callApi} = useApi();
@@ -8,20 +8,20 @@ export default function ApiCallsAddArticlePage() {
             'post',
             formData,
         );
-    }
+    };
 
     const updateArticleRequest = async ({ formData, id }) => {
-        return callApi(`/articles/${id}`,
+        return callApi(`/articles/${ id }`,
             'put',
             formData,
         );
-    }
+    };
 
     const getArticleRequest = async (id) => {
-        return callApi(`/articles/${id}`,
+        return callApi(`/articles/${ id }`,
             'get',
         );
-    }
+    };
 
     return {
         createArticleRequest,

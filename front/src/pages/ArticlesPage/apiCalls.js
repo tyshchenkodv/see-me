@@ -1,4 +1,4 @@
-import useApi from "../../hooks/useApi";
+import useApi from '../../hooks/useApi';
 
 export default function ApiCallsArticlesPage() {
     const { callApi } = useApi();
@@ -10,22 +10,22 @@ export default function ApiCallsArticlesPage() {
     };
 
     const deleteArticleRequest = async (id) => {
-        return callApi(`/articles/${id}`,
+        return callApi(`/articles/${ id }`,
             'delete',
         );
     };
 
-    const createCommentRequest = async formData => {
+    const createCommentRequest = async (formData) => {
         return callApi('/comments', 'post', formData);
-    }
+    };
 
-    const updateCommentRequest = async formData => {
-        return callApi(`/comments/${formData.id}`, 'put', formData);
-    }
+    const updateCommentRequest = async (formData) => {
+        return callApi(`/comments/${ formData.id }`, 'put', formData);
+    };
 
-    const deleteCommentRequest = async id => {
-        return callApi(`/comments/${id}`, 'delete');
-    }
+    const deleteCommentRequest = async (id) => {
+        return callApi(`/comments/${ id }`, 'delete');
+    };
 
     return {
         getAllArticles,
@@ -33,5 +33,5 @@ export default function ApiCallsArticlesPage() {
         createCommentRequest,
         deleteCommentRequest,
         updateCommentRequest,
-    }
+    };
 }

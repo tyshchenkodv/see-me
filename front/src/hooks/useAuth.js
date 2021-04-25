@@ -1,7 +1,8 @@
 import { useCallback, useContext } from 'react';
-import { apiClient } from '../config/axios';
+
 import { Context } from '../authStore';
-import {isNotExpired} from "../utils/isNotExpired";
+import { apiClient } from '../config/axios';
+import {isNotExpired} from '../utils/isNotExpired';
 
 export default function useAuth() {
     const [state, dispatch] = useContext(Context);
@@ -12,10 +13,10 @@ export default function useAuth() {
         });
         try {
             await apiClient
-                .get(`/auth/token`,{
+                .get('/auth/token',{
                     headers: {
                         'Content-Type': 'application/json',
-                        'token': state.token,
+                        token: state.token,
                     }})
                 .then((res) => {
                     dispatch({
@@ -23,7 +24,7 @@ export default function useAuth() {
                         payload: {
                             token: res.data.token,
                             tokenExpires: res.data.tokenExpires,
-                        }
+                        },
                     });
                     localStorage.setItem(
                         'token',
@@ -34,8 +35,8 @@ export default function useAuth() {
                         JSON.stringify(res.data.tokenExpires),
                     );
                 });
-        }catch (e) {
-            console.log('Login error with error: ' + e);
+        }catch (error) {
+            console.log('Login error with error: ' + error);
         }
     }, [state, dispatch]);
 
@@ -53,7 +54,7 @@ export default function useAuth() {
                 await apiClient.post(
                     '/auth/login',
                     { email, password }
-                ).then(res => {
+                ).then((res) => {
                     dispatch({
                         type: 'SET_AUTH',
                         payload: {
@@ -71,8 +72,8 @@ export default function useAuth() {
                         JSON.stringify(res.data.tokenExpires),
                     );
                 });
-            }catch (e) {
-                console.log('Login error with error: ' + e);
+            }catch (error) {
+                console.log('Login error with error: ' + error);
             }
         },
         [dispatch],
@@ -86,7 +87,7 @@ export default function useAuth() {
             try {
                 await apiClient
                     .post('/auth/login/facebook', data)
-                    .then(res => {
+                    .then((res) => {
                         dispatch({
                             type: 'SET_AUTH',
                             payload: {
@@ -104,8 +105,8 @@ export default function useAuth() {
                             JSON.stringify(res.data.tokenExpires),
                         );
                     });
-            }catch (e) {
-                console.log('Login error with error: ' + e);
+            }catch (error) {
+                console.log('Login error with error: ' + error);
             }
         },
         [dispatch],
@@ -119,7 +120,7 @@ export default function useAuth() {
             try {
                 await apiClient
                     .post('/auth/login/google', data)
-                    .then(res => {
+                    .then((res) => {
                         dispatch({
                             type: 'SET_AUTH',
                             payload: {
@@ -137,8 +138,8 @@ export default function useAuth() {
                             JSON.stringify(res.data.tokenExpires),
                         );
                     });
-            }catch (e) {
-                console.log('Login error with error: ' + e);
+            }catch (error) {
+                console.log('Login error with error: ' + error);
             }
         },
         [dispatch],
@@ -157,7 +158,7 @@ export default function useAuth() {
         }
 
         return false;
-    }
+    };
 
     const editUser = useCallback(async ({user, id}) => {
         dispatch({
@@ -166,22 +167,22 @@ export default function useAuth() {
         try {
             if (isNotExpired(state.tokenExpires)) {
                 await apiClient
-                    .put(`/users/${id}/edit`, {user: user}, {
+                    .put(`/users/${ id }/edit`, {user: user}, {
                         headers: {
                             'Content-Type': 'application/json',
-                            'token': state.token,
+                            token: state.token,
                         }})
                     .then((res) => {
                         dispatch({
                             type: 'SET_AUTH',
                             payload: {
                                 user: res.data,
-                            }
+                            },
                         });
                     });
             } else await refreshToken();
-        }catch (e) {
-            console.log('Login error with error: ' + e);
+        }catch (error) {
+            console.log('Login error with error: ' + error);
         }
     }, [state.token, state.tokenExpires, dispatch, refreshToken]);
 
@@ -196,7 +197,7 @@ export default function useAuth() {
                         headers: {
                             'Content-Type': 'application/json',
                             token: state.token,
-                        }
+                        },
                     })
                     .then((res) => {
                         dispatch({
@@ -205,12 +206,12 @@ export default function useAuth() {
                                 user: res.data.user,
                                 token: res.data.token,
                                 tokenExpires: res.data.tokenExpires,
-                            }
+                            },
                         });
                     });
             } else await refreshToken();
-        } catch (e) {
-            console.log('Login error with error: ' + e);
+        } catch (error) {
+            console.log('Login error with error: ' + error);
         }
     }, [state.token, state.tokenExpires, dispatch, refreshToken]);
 
@@ -221,22 +222,22 @@ export default function useAuth() {
         try {
             if (isNotExpired(state.tokenExpires)) {
                 await apiClient
-                    .put(`/users/${id}/updateAvatar`, formData,{
+                    .put(`/users/${ id }/updateAvatar`, formData,{
                         headers: {
                             'Content-Type': 'multipart/form-data',
-                            'token': state.token,
+                            token: state.token,
                         }})
                     .then((res) => {
                         dispatch({
                             type: 'SET_AUTH',
                             payload: {
                                 user: res.data,
-                            }
+                            },
                         });
                     });
             } else await refreshToken();
-        }catch (e) {
-            console.log('Login error with error: ' + e);
+        }catch (error) {
+            console.log('Login error with error: ' + error);
         }
     }, [state.token, state.tokenExpires, dispatch, refreshToken]);
 

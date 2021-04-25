@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
+
 import { apiClient } from '../config/axios';
-import useAuth from './useAuth';
 import { isNotExpired } from '../utils/isNotExpired';
+import useAuth from './useAuth';
 
 export default function useApi() {
     const { token, tokenExpires, refreshToken } = useAuth();
@@ -26,7 +27,7 @@ export default function useApi() {
         }
 
         return false;
-    }, [token, tokenExpires]);
+    }, [token, tokenExpires, refreshToken]);
 
     return {
         callApi,

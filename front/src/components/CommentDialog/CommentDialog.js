@@ -1,29 +1,30 @@
-import React from 'react';
-import {Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@material-ui/core";
-import {Formik, Form} from "formik";
-import {useStyles} from "./styles";
+import {Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField} from '@material-ui/core';
+import {Form,Formik} from 'formik';
 import PropTypes from 'prop-types';
-import {commentValidationSchema} from "./commentValidationSchema";
-import {getDateNowForDB} from "../../utils/formatDate";
+import React, {useCallback} from 'react';
+
+import {getDateNowForDB} from '../../utils/formatDate';
+import {commentValidationSchema} from './commentValidationSchema';
+import {useStyles} from './styles';
 
 function CommentDialog({openComment, setOpenComment, comment = undefined, userId, articleId, apiFunction, parentId = null}) {
     const classes = useStyles();
 
     const handleClose = () => {
         setOpenComment(false);
-    }
+    };
 
-    const handleCloseGo = formData => {
+    const handleCloseGo = useCallback(async (formData) => {
         formData.date = getDateNowForDB();
         formData.articleId = articleId;
         formData.userId = userId;
         formData.parentId = parentId;
-        if(comment) {
+        if (comment) {
             formData.id = comment.id;
         }
-        apiFunction(formData);
+        await apiFunction(formData);
         handleClose();
-    }
+    }, [apiFunction, articleId, comment, handleClose, parentId, userId]);
 
     return (
         <Dialog
@@ -41,20 +42,20 @@ function CommentDialog({openComment, setOpenComment, comment = undefined, userId
                     onSubmit={handleCloseGo}
                 >
                     {({
-                          values,
-                          errors,
-                          touched,
-                          handleChange,
-                      }) => (
+                        values,
+                        errors,
+                        touched,
+                        handleChange,
+                    }) => (
                         <Form>
                             <TextField fullWidth
-                                       id="text"
-                                       name="text"
-                                       className={classes.comment}
-                                       value={values.text}
-                                       onChange={handleChange}
-                                       error={touched.text && Boolean(errors.text)}
-                                       helperText={touched.text && errors.text}/>
+                                id="text"
+                                name="text"
+                                className={classes.comment}
+                                value={values.text}
+                                onChange={handleChange}
+                                error={touched.text && Boolean(errors.text)}
+                                helperText={touched.text && errors.text}/>
                             <DialogActions>
                                 <Button type="submit" color="primary">
                                     Go!
@@ -81,6 +82,6 @@ CommentDialog.propTypes = {
     articleId: PropTypes.object.isRequired,
     apiFunction: PropTypes.func.isRequired,
     parentId: PropTypes.number,
-}
+};
 
 export default CommentDialog;

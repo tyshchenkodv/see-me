@@ -1,14 +1,16 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { BrowserRouter } from "react-router-dom";
 import {
     QueryClient,
     QueryClientProvider,
 } from 'react-query';
-import AuthStore from './authStore';
+import { BrowserRouter } from 'react-router-dom';
+
+import App from './App';
 import ArticlesStore from './articlesStore';
+import AuthStore from './authStore';
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -20,16 +22,16 @@ const queryClient = new QueryClient({
 });
 
 ReactDOM.render(
-  <React.StrictMode>
-      <AuthStore>
-          <ArticlesStore>
-              <BrowserRouter>
-                  <QueryClientProvider client={queryClient}>
-                      <App />
-                  </QueryClientProvider>
-              </BrowserRouter>
-          </ArticlesStore>
-      </AuthStore>
-  </React.StrictMode>,
-  document.getElementById('root')
+    <React.StrictMode>
+        <AuthStore>
+            <ArticlesStore>
+                <BrowserRouter>
+                    <QueryClientProvider client={queryClient}>
+                        <App />
+                    </QueryClientProvider>
+                </BrowserRouter>
+            </ArticlesStore>
+        </AuthStore>
+    </React.StrictMode>,
+    document.getElementById('root')
 );

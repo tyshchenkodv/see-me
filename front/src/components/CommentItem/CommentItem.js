@@ -1,4 +1,3 @@
-import React, {useState} from 'react';
 import {
     Avatar,
     Button,
@@ -8,16 +7,19 @@ import {
     CardHeader,
     IconButton, Menu,
     MenuItem,
-    Typography
-} from "@material-ui/core";
-import {NavLink} from "react-router-dom";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import CommentIcon from "@material-ui/icons/Comment";
-import { useStyles } from "./styles";
-import useAuth from "../../hooks/useAuth";
-import {formatDate} from "../../utils/formatDate";
+    Typography,
+} from '@material-ui/core';
+import CommentIcon from '@material-ui/icons/Comment';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 import PropTypes from 'prop-types';
-import CommentDialog from "../CommentDialog";
+import React, {useState} from 'react';
+import {NavLink} from 'react-router-dom';
+
+import { API_HOST } from '../../config/configData.json';
+import useAuth from '../../hooks/useAuth';
+import {formatDate} from '../../utils/formatDate';
+import CommentDialog from '../CommentDialog';
+import { useStyles } from './styles';
 
 function CommentItem({comment, articleId, createComment, deleteComment, updateComment}) {
     const classes = useStyles();
@@ -32,7 +34,7 @@ function CommentItem({comment, articleId, createComment, deleteComment, updateCo
 
     const handleClickReply = () => {
         setOpenCommentReply(true);
-    }
+    };
 
     const handleCloseEdit = () => {
         setAnchorEl(null);
@@ -53,16 +55,16 @@ function CommentItem({comment, articleId, createComment, deleteComment, updateCo
             <Card className={classes.root}>
                 <CardHeader
                     avatar={
-                        <NavLink exact to={`/profiles/${comment?.user.id}`}>
+                        <NavLink exact to={`/profiles/${ comment?.user.id }`}>
                             <Avatar aria-label="recipe"
-                                    className={classes.avatar}
-                                    src={`http://localhost:3333/users/avatar/${comment?.user.avatar}`}/>
+                                className={classes.avatar}
+                                src={`${ API_HOST }/users/avatar/${ comment?.user.avatar }`}/>
                         </NavLink>
                     }
                     action={
                         <IconButton onClick={handleClick}
-                                        aria-label="settings"
-                                        hidden={comment.user.id !== user?.id}>
+                            aria-label="settings"
+                            hidden={comment.user.id !== user?.id}>
                             <MoreVertIcon/>
                         </IconButton>}
                     title={comment?.user.firstName + ' ' + comment?.user.secondName}
@@ -84,11 +86,12 @@ function CommentItem({comment, articleId, createComment, deleteComment, updateCo
                 <CardContent>
                     { comment?.items.length !== 0 && (
                         comment?.items.map((item) =>
-                            <CommentItem comment={item}
-                                         articleId={articleId}
-                                         createComment={createComment}
-                                         deleteComment={deleteComment}
-                                         updateComment={updateComment}/>
+                            <CommentItem key={comment.id}
+                                comment={item}
+                                articleId={articleId}
+                                createComment={createComment}
+                                deleteComment={deleteComment}
+                                updateComment={updateComment}/>
                         )
                     )}
                 </CardContent>
@@ -104,28 +107,33 @@ function CommentItem({comment, articleId, createComment, deleteComment, updateCo
                 <MenuItem onClick={handleCloseDelete}>Delete</MenuItem>
             </Menu>
             <CommentDialog openComment={openCommentEdit}
-                           setOpenComment={setOpenCommentEdit}
-                           comment={comment}
-                           userId={user?.id}
-                           articleId={articleId}
-                           apiFunction={updateComment}/>
+                setOpenComment={setOpenCommentEdit}
+                comment={comment}
+                userId={user?.id}
+                articleId={articleId}
+                apiFunction={updateComment}/>
             <CommentDialog openComment={openCommentReply}
-                           setOpenComment={setOpenCommentReply}
-                           userId={user?.id}
-                           articleId={articleId}
-                           apiFunction={createComment}
-                           parentId={comment?.id}/>
+                setOpenComment={setOpenCommentReply}
+                userId={user?.id}
+                articleId={articleId}
+                apiFunction={createComment}
+                parentId={comment?.id}/>
         </>
     );
 }
 
+CommentItem.defaultProps = {
+    comment: undefined,
+    articleId: undefined,
+};
+
 CommentItem.propTypes = {
     comment: PropTypes.shape({
-       id: PropTypes.number.isRequired,
-       text: PropTypes.string.isRequired,
-       date: PropTypes.string.isRequired,
-       user: PropTypes.object.isRequired,
-       items: PropTypes.array,
+        id: PropTypes.number.isRequired,
+        text: PropTypes.string.isRequired,
+        date: PropTypes.string.isRequired,
+        user: PropTypes.object.isRequired,
+        items: PropTypes.array,
     }),
     articleId: PropTypes.number,
     createComment: PropTypes.func.isRequired,
