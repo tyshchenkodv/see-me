@@ -1,4 +1,5 @@
 import { useCallback, useContext } from 'react';
+
 import { Context } from '../articlesStore';
 
 export default function useArticles() {
@@ -13,8 +14,8 @@ export default function useArticles() {
                         refetchArticles,
                     },
                 });
-            }catch (e) {
-                console.log('Login error with error: ' + e);
+            }catch (error) {
+                console.log('Login error with error: ' + error);
             }
         },
         [dispatch],

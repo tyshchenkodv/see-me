@@ -1,20 +1,28 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { Field, Form } from 'formik';
-import Cropper from 'react-cropper';
-import "cropperjs/dist/cropper.css";
-import {Select, MenuItem, DialogActions, Button, Grid} from '@material-ui/core';
+import 'cropperjs/dist/cropper.css';
 
-function AddEditArticleForm ({errors, touched, handleCloseCancel, setFieldValue}) {
+import {
+    Button, DialogActions, Grid,
+    MenuItem, Select,
+} from '@material-ui/core';
+import { Field, Form } from 'formik';
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
+import Cropper from 'react-cropper';
+
+function AddEditArticleForm({
+    errors, touched, handleCloseCancel, setFieldValue,
+}) {
     const [image, setImage] = useState();
     const [croppedImage, setCroppedImage] = useState();
     const [cropper, setCropper] = useState();
 
-    const handleChange = e => {
-        e.preventDefault();
-        const file = e.target.files[0];
+    const handleChange = (event) => {
+        event.preventDefault();
+        const file = event.target.files[0];
+
         if (file.type.match('image.*') && file.size < 10000000) {
             const reader = new FileReader();
+
             reader.onload = () => {
                 setImage(reader.result);
             };
@@ -27,7 +35,7 @@ function AddEditArticleForm ({errors, touched, handleCloseCancel, setFieldValue}
     const cropImage = () => {
         if (typeof cropper !== 'undefined') {
             setCroppedImage(cropper.getCroppedCanvas().toDataURL());
-            croppedImage && setFieldValue("image", croppedImage);
+            croppedImage && setFieldValue('image', croppedImage);
         }
     };
 
@@ -37,8 +45,13 @@ function AddEditArticleForm ({errors, touched, handleCloseCancel, setFieldValue}
                 <Grid item xs={12}>
                     <div className="form-group">
                         <label>Article title</label>
-                        <Field type="text" className="form-control" id="title" name="title"
-                               aria-describedby="emailHelp"/>
+                        <Field
+                            type="text"
+                            className="form-control"
+                            id="title"
+                            name="title"
+                            aria-describedby="emailHelp"
+                        />
                         {touched.title && errors.title ? (
                             <div className="alert alert-danger">{errors.title}</div>
                         ) : null}
@@ -47,7 +60,7 @@ function AddEditArticleForm ({errors, touched, handleCloseCancel, setFieldValue}
                 <Grid item xs={12}>
                     <div className="form-group">
                         <label>Article text</label>
-                        <Field type="text" className="form-control" id="text" name="text" as="textarea" rows="5"/>
+                        <Field type="text" className="form-control" id="text" name="text" as="textarea" rows="5" />
                         {touched.text && errors.text ? (
                             <div className="alert alert-danger">{errors.text}</div>
                         ) : null}
@@ -56,8 +69,8 @@ function AddEditArticleForm ({errors, touched, handleCloseCancel, setFieldValue}
                 <Grid item xs={12}>
                     <Field name="available">
                         {({
-                              field,
-                          }) => (
+                            field,
+                        }) => (
                             <div className="form-group">
                                 <label>Available to</label>
                                 <Select {...field} className="ml-3">
@@ -71,11 +84,13 @@ function AddEditArticleForm ({errors, touched, handleCloseCancel, setFieldValue}
                 </Grid>
                 <Grid item xs={12}>
                     <div>
-                        {!croppedImage && <Button variant="contained" component="label">
-                            Upload Image
-                            <Field onChange={handleChange} hidden type="file" name="image"/>
-                        </Button>}
-                        {image && !croppedImage && <Cropper src={image} onInitialized={instance => setCropper(instance)} />}
+                        {!croppedImage && (
+                            <Button variant="contained" component="label">
+                Upload Image
+                                <Field onChange={handleChange} hidden type="file" name="image" />
+                            </Button>
+                        )}
+                        {image && !croppedImage && <Cropper src={image} onInitialized={(instance) => setCropper(instance)} />}
                         {image && !croppedImage && <Button variant="contained" onClick={cropImage}>Crop!</Button>}
                         {croppedImage && <img src={croppedImage} alt="Cropped" />}
                     </div>
@@ -83,10 +98,10 @@ function AddEditArticleForm ({errors, touched, handleCloseCancel, setFieldValue}
             </Grid>
             <DialogActions>
                 <Button onClick={handleCloseCancel} color="primary">
-                    Cancel
+          Cancel
                 </Button>
                 <Button type="submit" color="primary">
-                    GO!
+          GO!
                 </Button>
             </DialogActions>
         </Form>
@@ -98,6 +113,6 @@ AddEditArticleForm.propTypes = {
     touched: PropTypes.object.isRequired,
     handleCloseCancel: PropTypes.func.isRequired,
     setFieldValue: PropTypes.func.isRequired,
-}
+};
 
 export default AddEditArticleForm;

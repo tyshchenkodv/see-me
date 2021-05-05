@@ -1,10 +1,11 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import PropTypes from 'prop-types';
+import React, {useCallback, useEffect, useState} from 'react';
+import { useMutation, useQuery } from 'react-query';
+
 import AddArticle from '../../components/AddArticle';
 import EditArticle from '../../components/EditArticle';
 import ApiCallsAddArticlePage from './apiCalls';
-import { useMutation, useQuery } from "react-query";
-import LinearProgress from "@material-ui/core/LinearProgress";
 
 function AddArticlePage({ match: { params }, history }) {
     const {id} = params;
@@ -13,7 +14,7 @@ function AddArticlePage({ match: { params }, history }) {
     const {mutate: createArticle} = useMutation(createArticleRequest);
     const {mutate: updateArticle} = useMutation(updateArticleRequest);
 
-    const {data: response, isFetching} = useQuery(`article${id}`, () => {
+    const {data: response, isFetching} = useQuery(`article${ id }`, () => {
         return getArticleRequest(id);
     });
     const {item: article} = response?.data || {};
@@ -21,21 +22,22 @@ function AddArticlePage({ match: { params }, history }) {
     const checkPageType = async () => {
         setPageType(id);
     };
+
     useEffect(checkPageType, []);
 
-    const onCreateArticle = useCallback(async formData => {
+    const onCreateArticle = useCallback(async (formData) => {
         try {
             await createArticle(formData);
-        } catch (e) {
-            console.log(e);
+        } catch (error) {
+            console.log(error);
         }
     }, []);
 
     const onUpdateArticle = useCallback(async ({formData, id}) => {
         try {
             await updateArticle({formData, id});
-        } catch (e) {
-            console.log(e);
+        } catch (error) {
+            console.log(error);
         }
     }, []);
 
@@ -44,18 +46,18 @@ function AddArticlePage({ match: { params }, history }) {
             <AddArticle createArticle={onCreateArticle} history={history}/> :
             (!isFetching ?
                 <EditArticle updateArticle={onUpdateArticle}
-                             article={article}
-                             history={history}/>
+                    article={article}
+                    history={history}/>
                 : <LinearProgress/>)
-    )
+    );
 }
 
 AddArticlePage.propTypes = {
     match: PropTypes.shape({
         params: PropTypes.shape({
-            id: PropTypes.string.isRequired
-        })
-    }),
+            id: PropTypes.string.isRequired,
+        }),
+    }).isRequired,
     history: PropTypes.object.isRequired,
 };
 

@@ -11,6 +11,6 @@ export const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
     },
     a: {
-        color: "white",
-    }
+        color: 'white',
+    },
 }));

@@ -4,7 +4,7 @@ const Reducer = (state, action) => {
             return {
                 ...state,
                 loading: true,
-            }
+            };
         case 'SET_AUTH':
             return {
                 ...state,
@@ -15,7 +15,7 @@ const Reducer = (state, action) => {
             return {
                 ...state,
                 loading: true,
-            }
+            };
         case 'CLEAR_AUTH':
             return {
                 ...state,

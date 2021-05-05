@@ -1,18 +1,19 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import FacebookLogin from 'react-facebook-login';
-import GoogleLogin from 'react-google-login';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import Grid from '@material-ui/core/Grid';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Grid from '@material-ui/core/Grid';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import PropTypes from 'prop-types';
+import React from 'react';
+import FacebookLogin from 'react-facebook-login';
+import GoogleLogin from 'react-google-login';
 import { NavLink } from 'react-router-dom';
+
+import useAuth from '../../hooks/useAuth';
 import { useStyles } from './styles';
-import useAuth from "../../hooks/useAuth";
 
 function SignInPage({ history }) {
     const classes = useStyles();
@@ -21,12 +22,12 @@ function SignInPage({ history }) {
     const responseGoogle = async ({profileObj}) => {
         await loginGoogle(profileObj);
         history.push('/');
-    }
+    };
 
     const responseFacebook = async (profileObj) => {
         await loginFacebook(profileObj);
         history.push('/');
-    }
+    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -38,7 +39,7 @@ function SignInPage({ history }) {
 
         await login(reqData);
         history.push('/');
-    }
+    };
 
 
     return (
@@ -61,7 +62,6 @@ function SignInPage({ history }) {
                         label="Email Address"
                         name="email"
                         autoComplete="email"
-                        autoFocus
                     />
                     <TextField
                         variant="outlined"
@@ -106,7 +106,7 @@ function SignInPage({ history }) {
                         <GoogleLogin
                             clientId={'55072592253-t1g135uduulg5a40b78vjqueedkvl2ud.apps.googleusercontent.com'}
                             onSuccess={responseGoogle}
-                            render={renderProps => <Button
+                            render={(renderProps) => <Button
                                 onClick={renderProps.onClick}
                                 type="submit"
                                 fullWidth
@@ -121,7 +121,7 @@ function SignInPage({ history }) {
                 <Grid container>
                     <Grid item xs={12}>
                         <NavLink exact to='/signup' variant="body2">
-                            {"Don't have an account? Sign Up"}
+                            {'Don\'t have an account? Sign Up'}
                         </NavLink>
                     </Grid>
                 </Grid>
@@ -132,6 +132,6 @@ function SignInPage({ history }) {
 
 SignInPage.propTypes = {
     history: PropTypes.object.isRequired,
-}
+};
 
 export default SignInPage;
